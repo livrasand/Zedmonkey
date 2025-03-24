@@ -1,7 +1,7 @@
 # Zedmonkey
 
 <p align="center">
-  <img src="icons/icon128.png" alt="Zedmonkey Logo" width="128" height="128">
+  <img src="src/icons/icon128.png" alt="Zedmonkey Logo" width="128" height="128">
 </p>
 
 <p align="center">
