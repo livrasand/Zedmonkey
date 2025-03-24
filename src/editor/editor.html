@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zedmonkey Script Editor</title>
+  <link rel="stylesheet" href="editor.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Side panel with scripts list -->
+    <div class="scripts-sidebar">
+      <div class="sidebar-header">
+        <input type="text" id="search-scripts" placeholder="Search and filter here...">
+      </div>
+      <div id="scripts-list" class="scripts-list">
+        <!-- Scripts will be loaded here dynamically -->
+      </div>
+    </div>
+
+    <!-- Main editor area -->
+    <div class="editor-container">
+      <div class="editor-header">
+        <div class="script-info-header">
+          <h1 id="script-title">New Script</h1>
+        </div>
+        <div class="editor-controls">
+          <button id="validate-script" class="btn icon-btn" title="Validate script">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          </button>
+          <button id="download-script" class="btn icon-btn" title="Download script">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          </button>
+          <button id="refresh-script" class="btn icon-btn" title="Refresh">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+          </button>
+          <button id="delete-script" class="btn icon-btn" title="Delete script">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          </button>
+          <button id="save-script" class="btn primary small">Save</button>
+          <button id="cancel-edit" class="btn secondary small">Cancel</button>
+        </div>
+      </div>
+      <div class="editor-main">
+        <div class="line-numbers" id="line-numbers">
+          <!-- Line numbers will be generated dynamically -->
+        </div>
+        <div class="code-editor-container">
+          <pre id="highlight-layer" class="highlight-layer"></pre>
+          <textarea id="script-content" class="code-editor" placeholder="// Paste your script here..."></textarea>
+        </div>
+      </div>
+      <div class="editor-footer">
+        <span id="status-message"></span>
+        <span id="cursor-position">Line: 1, Column: 1</span>
+      </div>
+    </div>
+  </div>
+  
+  <script src="editor.js"></script>
+</body>
+</html>

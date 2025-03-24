@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zedmonkey</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="../icons/icon16.png" alt="Zedmonkey Logo">
+      <h1>Zedmonkey</h1>
+    </div>
+    <div class="header-controls">
+      <button id="folder-button" class="icon-button" title="Open Scripts Folder/All Scripts View">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M3 4h18v4H3V4zm0 6h18v4H3v-4zm0 6h18v4H3v-4z"/></svg>
+      </button>
+      <button id="cloud-button" class="icon-button" title="Available Updates">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
+        <span id="update-badge" class="badge hidden">0</span>
+      </button>
+      <button id="refresh-button" class="icon-button" title="Refresh View">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+      </button>
+      <button id="add-script" class="icon-button" title="Add New Script">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      </button>
+      <button id="import-script" class="icon-button" title="Import Script">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M5 20h14v-2H5v2zm0-10h4v6h6v-6h4l-7-7-7 7z"/></svg>
+      </button>
+      <div class="toggle-switch" title="Enable Injection">
+        <input type="checkbox" id="injection-toggle" checked>
+        <label for="injection-toggle"></label>
+      </div>
+    </div>
+  </header>
+
+  <!-- Eliminamos el div de alerta de userscript -->
+  
+  <!-- Add the restricted site notification -->
+  <div id="restricted-site-alert" class="restricted-site-alert hidden">
+    <span>Zedmonkey can't run scripts on this page</span>
+    <span class="restricted-reason">(browser UI, extension, or search engine)</span>
+  </div>
+  
+  <!-- Add the no scripts notification with search options -->
+  <div id="no-scripts-alert" class="no-scripts-alert hidden">
+    <span>No scripts for this site</span>
+    <div class="search-options">
+      <a href="#" id="search-openuserjs">OpenUserJS</a>
+      <a href="#" id="search-greasyfork">GreasyFork</a>
+      <a href="#" id="search-github">GitHub</a>
+      <a href="#" id="search-userscripts-zone">Userscripts.zone</a>
+    </div>
+  </div>
+
+  <main>
+    <div id="updates-view" class="view hidden">
+      <h2>Available Updates</h2>
+      <div id="updates-list" class="scripts-list">
+        <!-- Updates will be listed here -->
+        <div class="empty-state">No updates available</div>
+      </div>
+    </div>
+
+    <div id="all-scripts-view" class="view hidden">
+      <h2>All Scripts</h2>
+      <div id="all-scripts-list" class="scripts-list">
+        <!-- All scripts will be listed here -->
+        <div class="empty-state">No scripts installed</div>
+      </div>
+    </div>
+
+    <div id="matched-scripts-view" class="view">
+      <h2>Matched Scripts</h2>
+      <div id="matched-scripts-list" class="scripts-list">
+        <!-- Matched scripts will be listed here -->
+        <div class="empty-state">No scripts match this page</div>
+      </div>
+    </div>
+    
+    <!-- La sección de acciones se ha eliminado ya que los botones se movieron al encabezado -->
+  </main>
+  
+  <footer>
+    <a href="#" id="open-extension-page">Settings</a>
+  </footer>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
