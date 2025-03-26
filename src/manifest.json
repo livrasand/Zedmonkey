@@ -19,7 +19,6 @@
     "permissions": [
       "storage",
       "scripting",
-      "tabs",
       "contextMenus"
     ],
     "host_permissions": [
