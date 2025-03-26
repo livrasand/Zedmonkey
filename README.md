@@ -1,4 +1,4 @@
-# Zedmonkey
+# Zedmonkey BETA
 
 <p align="center">
   <img src="src/icons/icon128.png" alt="Zedmonkey Logo" width="128" height="128">
@@ -6,10 +6,6 @@
 
 <p align="center">
   <b>A lightweight, developer-focused userscript manager built for speed and efficiency</b>
-</p>
-
-<p align="center">
-  <i>⚠️ Currently in BETA - Stable release coming soon ⚠️</i>
 </p>
 
 ## Overview
@@ -29,7 +25,7 @@ Zedmonkey is an open-source userscript manager designed for developers who deman
 ## Installation
 
 ### From Source (Development Version)
-1. Clone this repository: `git clone https://github.com/yourusername/Zedmonkey.git`
+1. Clone this repository: `git clone https://github.com/livrasand/Zedmonkey.git`
 2. Open Chrome/Edge and navigate to `chrome://extensions/`
 3. Enable "Developer mode" in the top-right corner
 4. Click "Load unpacked" and select the Zedmonkey directory
@@ -51,7 +47,7 @@ Zedmonkey introduces a minimalist metadata format called "Zedata Block" that use
 ```toml
 [script]
 name = "Hello World Script"
-namespace = "http://zedmonkey.local"
+namespace = "Zedmonkey"
 version = "1.0"
 description = "Shows a 'Hello World' notification when page loads"
 author = "Your Name"
@@ -62,8 +58,6 @@ grant = "none"
 Learn more about Zedata Block in the documentation .
 
 ## Development Status
-⚠️ BETA PHASE ⚠️
-
 Zedmonkey is currently in active development and considered BETA software. While it's functional for daily use, you may encounter bugs or incomplete features. A STABLE release is planned for the near future.
 
 ### Current Limitations
