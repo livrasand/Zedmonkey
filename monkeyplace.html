@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monkeyplace - Zedmonkey Script Repository</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="src/icons/icon16.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Fira+Code:wght@300..700&display=swap" rel="stylesheet">
+    <style>
+        .marketplace-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .marketplace-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .marketplace-title {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        
+        .marketplace-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+        
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 40px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 16px 20px 16px 50px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(61, 90, 254, 0.2);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+        
+        .categories {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+        
+        .category-tag {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background-color: #f5f5f5;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .category-tag:hover, .category-tag.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .scripts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .script-item {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border);
+        }
+        
+        .script-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .script-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .script-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .script-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        
+        .script-author {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .script-body {
+            padding: 20px;
+        }
+        
+        .script-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            height: 70px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+        
+        .script-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .script-stats {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .script-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .script-format {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            background-color: rgba(61, 90, 254, 0.1);
+            color: var(--primary);
+        }
+        
+        .script-footer {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .install-btn {
+            padding: 8px 16px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .install-btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .script-version {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .verified-badge {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #00C853;
+            font-size: 13px;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 40px;
+        }
+        
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background-color: white;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .page-btn:hover, .page-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .format-info {
+            background-color: #f9f9f9;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .format-info-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+        
+        .format-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .format-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .format-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .format-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .code-example {
+            background-color: var(--code-bg);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            overflow: auto;
+        }
+        
+        .code-example pre {
+            margin: 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #E0E0E0;
+        }
+        
+        @media (max-width: 768px) {
+            .format-comparison {
+                grid-template-columns: 1fr;
+            }
+            
+            .scripts-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="noise-overlay"></div>
+    <div class="container">
+        <nav class="navbar">
+            <div class="logo-container">
+                <img src="src/icons/icon128.png" alt="Zedmonkey Logo" class="logo">
+                <span>Zedmonkey</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="#">Docs</a>
+                <a href="monkeyplace.html" class="active">Monkeyplace</a>
+                <a href="https://github.com/livrasand/Zedmonkey">GitHub</a>
+            </div>
+        </nav>
+        
+        <div class="marketplace-container">
+            <div class="marketplace-header">
+                <h1 class="marketplace-title">Monkeyplace</h1>
+                <p class="marketplace-subtitle">Discover and install verified userscripts that enhance your browsing experience. All scripts are reviewed for security and compatibility.</p>
+                
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search for scripts...">
+                </div>
+                
+                <div class="categories">
+                    <span class="category-tag active">All</span>
+                    <span class="category-tag">Productivity</span>
+                    <span class="category-tag">Dark Mode</span>
+                    <span class="category-tag">Social Media</span>
+                    <span class="category-tag">Shopping</span>
+                    <span class="category-tag">Video</span>
+                    <span class="category-tag">Reading</span>
+                    <span class="category-tag">Developer Tools</span>
+                </div>
+            </div>
+            
+            <div class="format-info">
+                <h2 class="format-info-title">Script Formats Supported</h2>
+                <div class="format-comparison">
+                    <div class="format-card">
+                        <h3><i class="fas fa-shield-alt" style="color: var(--primary);"></i> Zedata Block</h3>
+                        <p>Our modern, clean format designed specifically for Zedmonkey with enhanced security features and improved readability.</p>
+                        <div class="code-example">
+                            <pre>[script]
+name = "Dark Mode Everywhere"
+namespace = "zedmonkey"
+version = "1.2.0"
+description = "Applies dark mode to any website"
+author = "Zedmonkey Team"
+match = "*://*/*"
+grant = "none"</pre>
+                        </div>
+                    </div>
+                    
+                    <div class="format-card">
+                        <h3><i class="fas fa-code" style="color: var(--text-secondary);"></i> Metadata Block</h3>
+                        <p>Full compatibility with traditional userscript formats, ensuring you can use scripts from any source.</p>
+                        <div class="code-example">
+                            <pre>// ==UserScript==
+// @name        Dark Mode Everywhere
+// @namespace   zedmonkey
+// @version     1.2.0
+// @description Applies dark mode to any website
+// @author      Zedmonkey Team
+// @match       *://*/*
+// @grant       none
+// ==/UserScript==</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="scripts-grid">
+                <!-- Script 1 -->
+                <div class="script-item">
+                    <div class="script-header">
+                        <div class="script-icon">
+                            <i class="fas fa-moon"></i>
+                        </div>
+                        <div>
+                            <h3 class="script-title">Dark Mode Everywhere</h3>
+                            <span class="script-author">by Zedmonkey Team</span>
+                        </div>
+                    </div>
+                    <div class="script-body">
+                        <p class="script-description">Automatically applies a customizable dark mode to any website. Includes settings for contrast, brightness, and exclusions.</p>
+                        <div class="script-meta">
+                            <div class="script-stats">
+                                <span class="script-stat"><i class="fas fa-download"></i> 12.5k</span>
+                                <span class="script-stat"><i class="fas fa-star"></i> 4.8</span>
+                            </div>
+                            <span class="script-format">Zedata</span>
+                        </div>
+                    </div>
+                    <div class="script-footer">
+                        <span class="script-version">v1.2.0</span>
+                        <div class="verified-badge">
+                            <i class="fas fa-check-circle"></i> Verified
+                        </div>
+                        <button class="install-btn">
+                            <i class="fas fa-download"></i> Install
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Script 2 -->
+                <div class="script-item">
+                    <div class="script-header">
+                        <div class="script-icon" style="background-color: #FF5722;">
+                            <i class="fas fa-ad"></i>
+                        </div>
+                        <div>
+                            <h3 class="script-title">AdBlocker Plus</h3>
+                            <span class="script-author">by BlockMaster</span>
+                        </div>
+                    </div>
+                    <div class="script-body">
+                        <p class="script-description">Blocks ads, popups, and trackers across all websites. Lightweight alternative to browser extensions with customizable filters.</p>
+                        <div class="script-meta">
+                            <div class="script-stats">
+                                <span class="script-stat"><i class="fas fa-download"></i> 25.3k</span>
+                                <span class="script-stat"><i class="fas fa-star"></i> 4.9</span>
+                            </div>
+                            <span class="script-format">Zedata</span>
+                        </div>
+                    </div>
+                    <div class="script-footer">
+                        <span class="script-version">v2.1.4</span>
+                        <div class="verified-badge">
+                            <i class="fas fa-check-circle"></i> Verified
+                        </div>
+                        <button class="install-btn">
+                            <i class="fas fa-download"></i> Install
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Script 3 -->
+                <div class="script-item">
+                    <div class="script-header">
+                        <div class="script-icon" style="background-color: #4CAF50;">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div>
+                            <h3 class="script-title">Price Tracker</h3>
+                            <span class="script-author">by ShopSmart</span>
+                        </div>
+                    </div>
+                    <div class="script-body">
+                        <p class="script-description">Tracks prices on major shopping sites and shows price history. Get alerts when prices drop on your watched items.</p>
+                        <div class="script-meta">
+                            <div class="script-stats">
+                                <span class="script-stat"><i class="fas fa-download"></i> 8.7k</span>
+                                <span class="script-stat"><i class="fas fa-star"></i> 4.6</span>
+                            </div>
+                            <span class="script-format">Metadata</span>
+                        </div>
+                    </div>
+                    <div class="script-footer">
+                        <span class="script-version">v1.5.2</span>
+                        <div class="verified-badge">
+                            <i class="fas fa-check-circle"></i> Verified
+                        </div>
+                        <button class="install-btn">
+                            <i class="fas fa-download"></i> Install
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Script 4 -->
+                <div class="script-item">
+                    <div class="script-header">
+                        <div class="script-icon" style="background-color: #2196F3;">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div>
+                            <h3 class="script-title">Video Enhancer</h3>
+                            <span class="script-author">by MediaPro</span>
+                        </div>
+                    </div>
+                    <div class="script-body">
+                        <p class="script-description">Adds advanced controls to video players including playback speed, screenshot, picture-in-picture, and quality control.</p>
+                        <div class="script-meta">
+                            <div class="script-stats">
+                                <span class="script-stat"><i class="fas fa-download"></i> 15.2k</span>
+                                <span class="script-stat"><i class="fas fa-star"></i> 4.7</span>
+                            </div>
+                            <span class="script-format">Zedata</span>
+                        </div>
+                    </div>
+                    <div class="script-footer">
+                        <span class="script-version">v3.0.1</span>
+                        <div class="verified-badge">
+                            <i class="fas fa-check-circle"></i> Verified
+                        </div>
+                        <button class="install-btn">
+                            <i class="fas fa-download"></i> Install
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Script 5 -->
+                <div class="script-item">
+                    <div class="script-header">
+                        <div class="script-icon" style="background-color: #9C27B0;">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div>
+                            <h3 class="script-title">GitHub Enhancer</h3>
+                            <span class="script-author">by DevTools</span>
+                        </div>
+                    </div>
+                    <div class="script-body">
+                        <p class="script-description">Enhances GitHub with additional features like file size display, one-click copy, and advanced code navigation.</p>
+                        <div class="script-meta">
+                            <div class="script-stats">
+                                <span class="script-stat"><i class="fas fa-download"></i> 7.8k</span>
+                                <span class="script-stat"><i class="fas fa-star"></i> 4.8</span>
+                            </div>
+                            <span class="script-format">Zedata</span>
+                        </div>
+                    </div>
+                    <div class="script-footer">
+                        <span class="script-version">v2.3.0</span>
+                        <div class="verified-badge">
+                            <i class="fas fa-check-circle"></i> Verified
+                        </div>
+                        <button class="install-btn">
+                            <i class="fas fa-download"></i> Install
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Script 6 -->
+                <div class="script-item">
+                    <div class="script-header">
+                        <div class="script-icon" style="background-color: #FF9800;">
+                            <i class="fas fa-book-reader"></i>
+                        </div>
+                        <div>
+                            <h3 class="script-title">Reader Mode</h3>
+                            <span class="script-author">by ReadEasy</span>
+                        </div>
+                    </div>
+                    <div class="script-body">
+                        <p class="script-description">Transforms any article or blog post into a clean, distraction-free reading experience with customizable fonts and themes.</p>
+                        <div class="script-meta">
+                            <div class="script-stats">
+                                <span class="script-stat"><i class="fas fa-download"></i> 6.4k</span>
+                                <span class="script-stat"><i class="fas fa-star"></i> 4.5</span>
+                            </div>
+                            <span class="script-format">Metadata</span>
+                        </div>
+                    </div>
+                    <div class="script-footer">
+                        <span class="script-version">v1.8.3</span>
+                        <div class="verified-badge">
+                            <i class="fas fa-check-circle"></i> Verified
+                        </div>
+                        <button class="install-btn">
+                            <i class="fas fa-download"></i> Install
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pagination">
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">4</button>
+                <button class="page-btn">5</button>
+                <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="privacy.html">Privacy</a>
+                    <a href="terms.html">Terms</a>
+                
