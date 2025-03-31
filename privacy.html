@@ -1,72 +1,25 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Privacy Policy for Zedmonkey - the lightning-fast userscript manager. Learn how we protect your data and privacy.">
+    <meta name="keywords" content="Zedmonkey privacy, userscript manager privacy, Zedmonkey data policy, browser extension privacy">
     <title>Privacy Policy - Zedmonkey</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="src/icons/icon16.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Fira+Code:wght@300..700&display=swap" rel="stylesheet">
-    <style>
-        .privacy-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-        
-        .privacy-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        
-        .privacy-title {
-            font-size: 36px;
-            font-weight: 600;
-            margin-bottom: 16px;
-        }
-        
-        .privacy-section {
-            margin-bottom: 40px;
-        }
-        
-        .privacy-section h2 {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: var(--text-primary);
-        }
-        
-        .privacy-section p {
-            margin-bottom: 16px;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-        
-        .privacy-section ul {
-            margin-left: 20px;
-            margin-bottom: 16px;
-        }
-        
-        .privacy-section li {
-            margin-bottom: 8px;
-            color: var(--text-secondary);
-        }
-        
-        .privacy-footer {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 14px;
-            margin-top: 60px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=JetBrains+Mono:wght@300..700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="noise-overlay"></div>
+    <div class="stars-container">
+        <div class="stars"></div>
+        <div class="stars2"></div>
+        <div class="stars3"></div>
+    </div>
+    
     <div class="container">
         <nav class="navbar">
             <div class="logo-container">
@@ -74,65 +27,94 @@
                 <span>Zedmonkey</span>
             </div>
             <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="#">Docs</a>
-                <a href="monkeyplace.html">Monkeyplace</a>
-                <a href="https://github.com/livrasand/Zedmonkey">GitHub</a>
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#zedata" class="nav-link">Zedata</a>
+                <a href="#contribute" class="nav-link">Contribute</a>
+                <a href="https://github.com/livrasand/Zedmonkey" class="nav-link github-link">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://chromewebstore.google.com/detail/ahppjceidfcinboledomgmbmnafdidll" class="download-nav-btn">
+                    <i class="fas fa-download"></i> Download
+                </a>
             </div>
         </nav>
         
-        <div class="privacy-container">
-            <div class="privacy-header">
-                <h1 class="privacy-title">Privacy Policy</h1>
-                <p>This privacy policy outlines how the Zedmonkey extension handles your data.</p>
+        <section class="legal-section">
+            <div class="legal-header">
+                <h1>Privacy Policy <span class="version-tag">March 30, 2025</span></h1>
+                <p class="legal-description">
+                    This privacy policy outlines how the Zedmonkey extension handles your data.
+                </p>
             </div>
             
-            <div class="privacy-section">
-                <h2>Data Collection</h2>
-                <p>The Zedmonkey extension does not collect personal data from users. It operates locally within your browser and does not transmit data to external servers.</p>
+            <div class="legal-content">
+                <div class="legal-card">
+                    <h2>Data Collection</h2>
+                    <p>The Zedmonkey extension does not collect personal data from users. It operates locally within your browser and does not transmit data to external servers.</p>
+                </div>
+                
+                <div class="legal-card">
+                    <h2>Permissions</h2>
+                    <p>The extension requires certain permissions to function effectively:</p>
+                    <ul>
+                        <li><strong>Storage:</strong> Used to save scripts and settings locally within your browser.</li>
+                        <li><strong>Scripting:</strong> Allows the extension to execute scripts on web pages as per user configuration.</li>
+                        <li><strong>ContextMenus:</strong> Enables the extension to add options to the browser's context menu for ease of use.</li>
+                        <li><strong>Host Permissions:</strong> The extension can access all URLs to apply scripts as configured by the user.</li>
+                    </ul>
+                </div>
+                
+                <div class="legal-card">
+                    <h2>Local Storage</h2>
+                    <p>Zedmonkey stores the following information locally in your browser:</p>
+                    <ul>
+                        <li>User scripts and their configurations</li>
+                        <li>Extension settings and preferences</li>
+                        <li>Script execution history (if enabled)</li>
+                    </ul>
+                    <p>This data is stored using the browser's built-in storage APIs and is not accessible to other extensions or websites.</p>
+                </div>
+                
+                <div class="legal-card">
+                    <h2>Cloud Synchronization</h2>
+                    <p>If you choose to use the cloud synchronization feature, your scripts and settings will be stored in your personal cloud storage account (Dropbox, Google Drive, etc.). Zedmonkey does not have access to your cloud storage credentials and uses OAuth for secure authentication.</p>
+                </div>
+                
+                <div class="legal-card">
+                    <h2>Third-Party Scripts</h2>
+                    <p>Scripts installed through Zedmonkey may collect data according to their own privacy policies. We recommend reviewing the code of any script before installation to understand its data practices.</p>
+                </div>
+                
+                <div class="legal-card">
+                    <h2>Changes to Privacy Policy</h2>
+                    <p>We may update this privacy policy from time to time. We will notify users of any significant changes by updating the date at the top of this policy.</p>
+                </div>
+                
+                <div class="legal-card">
+                    <h2>Contact</h2>
+                    <p>If you have any questions about this privacy policy, please contact us through our GitHub repository.</p>
+                </div>
             </div>
-            
-            <div class="privacy-section">
-                <h2>Permissions</h2>
-                <p>The extension requires certain permissions to function effectively:</p>
-                <ul>
-                    <li><strong>Storage:</strong> Used to save scripts and settings locally within your browser.</li>
-                    <li><strong>Scripting:</strong> Allows the extension to execute scripts on web pages as per user configuration.</li>
-                    <li><strong>ContextMenus:</strong> Enables the extension to add options to the browser's context menu for ease of use.</li>
-                    <li><strong>Host Permissions:</strong> The extension can access all URLs to apply scripts as configured by the user.</li>
-                </ul>
-            </div>
-            
-            <div class="privacy-section">
-                <h2>Third-Party Services</h2>
-                <p>The extension may interact with third-party services for script synchronization, such as Dropbox, OneDrive, Google Drive, or WebDAV. These interactions are initiated by the user and are subject to the privacy policies of the respective services.</p>
-            </div>
-            
-            <div class="privacy-section">
-                <h2>Security</h2>
-                <p>We prioritize the security of your data. The extension is designed to operate securely within your browser environment, and we recommend keeping your browser and extension updated to the latest versions.</p>
-            </div>
-            
-            <div class="privacy-section">
-                <h2>Changes to This Policy</h2>
-                <p>We may update this privacy policy from time to time. Any changes will be posted on this page, and we encourage users to review the policy periodically.</p>
-            </div>
-            
-            <div class="privacy-footer">
-                <p>For any questions or concerns regarding this privacy policy, please contact us at livrasand@outlook.com.</p>
-            </div>
-        </div>
+        </section>
         
         <footer>
             <div class="footer-content">
+                <div class="logo-container">
+                    <img src="src/icons/icon128.png" alt="Zedmonkey Logo" class="logo">
+                    <span>Zedmonkey</span>
+                </div>
                 <div class="footer-links">
-                    <a href="privacy.html" class="active">Privacy</a>
+                    <a href="privacy.html">Privacy</a>
                     <a href="terms.html">Terms</a>
+                    <a href="https://github.com/livrasand/Zedmonkey/issues">Report Issues</a>
                 </div>
-                <p>Crafted with <i class="fas fa-heart"></i> for developers by livrasand</p>
                 <div class="social-links">
-                    <a href="https://github.com/livrasand" class="social-link"><i class="fab fa-github"></i></a>
+                    <a href="https://github.com/livrasand/Zedmonkey" class="social-link"><i class="fab fa-github"></i></a>
                 </div>
+            </div>
+            <div class="footer-copyright">
+                <p>© 2025 Zedmonkey Project. Lightweight by design, powerful by default.</p>
             </div>
         </footer>
     </div>

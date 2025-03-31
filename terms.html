@@ -1,72 +1,25 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Terms of Service for Zedmonkey - the lightning-fast userscript manager. Learn about the terms and conditions for using our extension.">
+    <meta name="keywords" content="Zedmonkey terms, userscript manager terms, Zedmonkey conditions, browser extension terms">
     <title>Terms of Service - Zedmonkey</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="src/icons/icon16.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Fira+Code:wght@300..700&display=swap" rel="stylesheet">
-    <style>
-        .terms-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-        
-        .terms-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        
-        .terms-title {
-            font-size: 36px;
-            font-weight: 600;
-            margin-bottom: 16px;
-        }
-        
-        .terms-section {
-            margin-bottom: 40px;
-        }
-        
-        .terms-section h2 {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: var(--text-primary);
-        }
-        
-        .terms-section p {
-            margin-bottom: 16px;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-        
-        .terms-section ul {
-            margin-left: 20px;
-            margin-bottom: 16px;
-        }
-        
-        .terms-section li {
-            margin-bottom: 8px;
-            color: var(--text-secondary);
-        }
-        
-        .terms-footer {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 14px;
-            margin-top: 60px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=JetBrains+Mono:wght@300..700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="noise-overlay"></div>
+    <div class="stars-container">
+        <div class="stars"></div>
+        <div class="stars2"></div>
+        <div class="stars3"></div>
+    </div>
+    
     <div class="container">
         <nav class="navbar">
             <div class="logo-container">
@@ -74,87 +27,88 @@
                 <span>Zedmonkey</span>
             </div>
             <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="#">Docs</a>
-                <a href="monkeyplace.html">Monkeyplace</a>
-                <a href="https://github.com/livrasand/Zedmonkey">GitHub</a>
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#zedata" class="nav-link">Zedata</a>
+                <a href="#contribute" class="nav-link">Contribute</a>
+                <a href="https://github.com/livrasand/Zedmonkey" class="nav-link github-link">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://chromewebstore.google.com/detail/ahppjceidfcinboledomgmbmnafdidll" class="download-nav-btn">
+                    <i class="fas fa-download"></i> Download
+                </a>
             </div>
         </nav>
         
-        <div class="terms-container">
-            <div class="terms-header">
-                <h1 class="terms-title">Terms of Service</h1>
-                <p>Last updated: June 2023</p>
+        <section class="legal-section">
+            <div class="legal-header">
+                <h1>Terms of Service <span class="version-tag">March 30, 2025</span></h1>
+                <p class="legal-description">
+                    These terms govern your use of the Zedmonkey extension. Please read them carefully.
+                </p>
             </div>
             
-            <div class="terms-section">
-                <h2>1. Acceptance of Terms</h2>
-                <p>By using Zedmonkey ("the Extension"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Extension.</p>
+            <div class="legal-content">
+                <div class="legal-card">
+                    <h2>1. Acceptance of Terms</h2>
+                    <p>By using Zedmonkey ("the Extension"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Extension.</p>
+                </div>
+                
+                <div class="legal-card">
+                    <h2>2. Description of Service</h2>
+                    <p>Zedmonkey is an open-source userscript manager that allows users to install, manage, and run userscripts on websites. The Extension is provided "as is" and "as available" without any warranties.</p>
+                </div>
+                
+                <div class="legal-card">
+                    <h2>3. User Responsibilities</h2>
+                    <p>As a user of Zedmonkey, you are responsible for:</p>
+                    <ul>
+                        <li>All content and scripts you install and run through the Extension</li>
+                        <li>Ensuring that your use of userscripts complies with the terms of service of the websites you visit</li>
+                        <li>Verifying the safety and security of scripts before installation</li>
+                        <li>Using the Extension in compliance with all applicable laws and regulations</li>
+                    </ul>
+                </div>
+                
+                <div class="legal-card">
+                    <h2>4. Intellectual Property</h2>
+                    <p>Zedmonkey is open-source software released under the MIT License. You are free to use, modify, and distribute the Extension in accordance with this license.</p>
+                </div>
+                
+                <div class="legal-card">
+                    <h2>5. Limitation of Liability</h2>
+                    <p>The developers of Zedmonkey shall not be liable for any direct, indirect, incidental, special, consequential, or exemplary damages resulting from your use of the Extension or any scripts you install through it.</p>
+                </div>
+                
+                <div class="legal-card">
+                    <h2>6. Changes to Terms</h2>
+                    <p>We reserve the right to modify these Terms of Service at any time. We will provide notice of significant changes by updating the "Last updated" date at the top of these terms.</p>
+                </div>
+                
+                <div class="legal-card">
+                    <h2>7. Contact</h2>
+                    <p>If you have any questions about these Terms of Service, please contact us through our GitHub repository.</p>
+                </div>
             </div>
-            
-            <div class="terms-section">
-                <h2>2. Description of Service</h2>
-                <p>Zedmonkey is an open-source userscript manager that allows users to install, manage, and run userscripts on websites. The Extension is provided "as is" and "as available" without any warranties.</p>
-            </div>
-            
-            <div class="terms-section">
-                <h2>3. User Responsibilities</h2>
-                <p>As a user of Zedmonkey, you are responsible for:</p>
-                <ul>
-                    <li>All content and scripts you install and run through the Extension</li>
-                    <li>Ensuring that your use of userscripts complies with the terms of service of the websites you visit</li>
-                    <li>Verifying the safety and security of scripts before installation</li>
-                    <li>Using the Extension in compliance with all applicable laws and regulations</li>
-                </ul>
-            </div>
-            
-            <div class="terms-section">
-                <h2>4. Monkeyplace Scripts</h2>
-                <p>While scripts available in the Monkeyplace are verified for basic security and functionality, we cannot guarantee they are completely free from bugs or security issues. Users should:</p>
-                <ul>
-                    <li>Review script code before installation when possible</li>
-                    <li>Report any suspicious or problematic scripts</li>
-                    <li>Understand that script behavior may change with website updates</li>
-                </ul>
-            </div>
-            
-            <div class="terms-section">
-                <h2>5. Intellectual Property</h2>
-                <p>Zedmonkey is open-source software released under the GNU General Public License v3 (GPL-3.0). You may use, modify, and distribute the Extension in accordance with this license, which ensures that derivative works remain open source.</p>
-                <p>Scripts created by third parties and available through Monkeyplace or other sources are subject to their own licensing terms.</p>
-            </div>
-            
-            <div class="terms-section">
-                <h2>6. Limitation of Liability</h2>
-                <p>To the maximum extent permitted by law, the developers of Zedmonkey shall not be liable for any direct, indirect, incidental, special, consequential, or exemplary damages resulting from your use of the Extension or any scripts installed through it.</p>
-            </div>
-            
-            <div class="terms-section">
-                <h2>7. Changes to Terms</h2>
-                <p>We reserve the right to modify these Terms of Service at any time. Continued use of the Extension after any such changes constitutes your acceptance of the new Terms of Service.</p>
-            </div>
-            
-            <div class="terms-section">
-                <h2>8. Termination</h2>
-                <p>We reserve the right to terminate or suspend access to the Extension for any user who violates these Terms of Service.</p>
-            </div>
-            
-            <div class="terms-footer">
-                <p>If you have any questions about these Terms of Service, please contact us.</p>
-                <p>© 2023 Zedmonkey. All rights reserved.</p>
-            </div>
-        </div>
+        </section>
         
         <footer>
             <div class="footer-content">
+                <div class="logo-container">
+                    <img src="src/icons/icon128.png" alt="Zedmonkey Logo" class="logo">
+                    <span>Zedmonkey</span>
+                </div>
                 <div class="footer-links">
                     <a href="privacy.html">Privacy</a>
                     <a href="terms.html">Terms</a>
+                    <a href="https://github.com/livrasand/Zedmonkey/issues">Report Issues</a>
                 </div>
-                <p>Crafted with <i class="fas fa-heart"></i> for developers by livrasand</p>
                 <div class="social-links">
-                    <a href="https://github.com/livrasand" class="social-link"><i class="fab fa-github"></i></a>
+                    <a href="https://github.com/livrasand/Zedmonkey" class="social-link"><i class="fab fa-github"></i></a>
                 </div>
+            </div>
+            <div class="footer-copyright">
+                <p>© 2025 Zedmonkey Project. Lightweight by design, powerful by default.</p>
             </div>
         </footer>
     </div>

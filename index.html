@@ -1,18 +1,25 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Zedmonkey is a lightning-fast, lightweight userscript manager that outperforms competitors with 70x faster execution and 47% less memory usage. Features Zedata Block format for optimized performance.">
+    <meta name="keywords" content="Zedmonkey, userscript manager, Zedata Block, browser extension, script manager, Tampermonkey alternative, lightweight extension, fast userscript, performance optimization, Chrome extension, Edge extension">
     <title>Zedmonkey - The ultimate userscript manager</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="src/icons/icon16.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Fira+Code:wght@300..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=JetBrains+Mono:wght@300..700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="noise-overlay"></div>
+    <div class="stars-container">
+        <div class="stars"></div>
+        <div class="stars2"></div>
+        <div class="stars3"></div>
+    </div>
+    
     <div class="container">
         <nav class="navbar">
             <div class="logo-container">
@@ -20,145 +27,510 @@
                 <span>Zedmonkey</span>
             </div>
             <div class="nav-links">
-                <a href="index.html" class="active">Home</a>
-                <a href="#">Docs</a>
-                <a href="monkeyplace.html">Monkeyplace</a>
-                <a href="https://github.com/livrasand/Zedmonkey">GitHub</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#comparison" class="nav-link">Comparison</a>
+                <a href="#zedata" class="nav-link">Zedata</a>
+                <a href="#contribute" class="nav-link">Contribute</a>
+                <a href="https://github.com/livrasand/Zedmonkey" class="nav-link github-link">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://chromewebstore.google.com/detail/ahppjceidfcinboledomgmbmnafdidll" class="download-nav-btn">
+                    <i class="fas fa-download"></i> Download
+                </a>
             </div>
         </nav>
         
-        <header>
-            <div class="header-content">
-                <div class="logo-accent"></div>
-                <h1>Zedmonkey<span class="version">BETA</span></h1>
-                <p class="description">
-                    An open-source userscript manager engineered for developers who demand <span class="highlight">speed</span> and <span class="highlight">efficiency</span>. Lightweight by design, powerful by default.
+        <header class="hero">
+            <div class="hero-content">
+                <h1>Zedmonkey <span class="version-tag">βeta</span></h1>
+                <p class="hero-description">
+                    A lightning-fast userscript manager engineered for developers who demand <span class="highlight">speed</span> and <span class="highlight">efficiency</span>.
                 </p>
-                <div class="header-actions">
-                    <button class="download-btn">
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-value">70x</span>
+                        <span class="stat-label">Faster Execution</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">47%</span>
+                        <span class="stat-label">Less Memory</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">0</span>
+                        <span class="stat-label">Background Impact</span>
+                    </div>
+                </div>
+                <div class="hero-actions">
+                    <a href="https://chromewebstore.google.com/detail/ahppjceidfcinboledomgmbmnafdidll" class="primary-btn">
                         <i class="fas fa-download"></i> Download now
-                    </button>
-                    <button class="clone-btn">
-                        <i class="fab fa-github"></i> Clone source
-                    </button>
+                    </a>
+                    <a href="https://github.com/livrasand/Zedmonkey" class="secondary-btn">
+                        <i class="fab fa-github"></i> View source
+                    </a>
                 </div>
                 <div class="compatibility">
                     <span class="browser-badge"><i class="fab fa-chrome"></i> Chrome</span>
                     <span class="browser-badge"><i class="fab fa-edge"></i> Edge</span>
                     <span class="browser-badge coming-soon"><i class="fab fa-firefox"></i> Firefox (soon)</span>
+                    <span class="browser-badge coming-soon"><i class="fab fa-safari"></i> Safari (soon)</span>
                 </div>
             </div>
-            <div class="header-visual">
+            <div class="hero-visual">
                 <div class="code-snippet">
-                    <pre><code>[script]
-name = "Hello World Script"
-namespace = "zedmonkey"
-version = "1.0.0"
-description = "Hello World!"
-author = "Zedmonkey User"
-match = "*://*/*"
-grant = "none"
-                        
+                    <div class="code-header">
+                        <div class="code-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <div class="code-title">
+                            <span class="format-name">Metadata Block (0.317 KB)</span>
+                            <button class="copy-btn" style="display: none;"><i class="fas fa-copy"></i></button>
+                        </div>
+                    </div>
+                    <div class="code-transition-container">
+                        <pre class="code-slide"><code>// ==UserScript==
+// @name         Hello World Script
+// @namespace    zedmonkey
+// @version      1.0.0
+// @description  Hello World!
+// @author       Zedmonkey User
+// @match        *://*/*
+// @grant        none
+// ==/UserScript==
+
 (function() {
-'use strict';
+    'use strict';
     window.alert('Hello World!');
-})();
-                        </code></pre>
+})();</code></pre>
+                        <pre class="code-slide"><code>script,HelloWorldScript,zedmonkey,1.0.0,HelloWorld,ZedmonkeyUser,*,none((function(){"use strict";window.alert("Hello World!")}))();</code></pre>
+                        
+                    </div>
+                    <div class="code-nav">
+                        <span class="code-dot active" data-slide="0"></span>
+                        <span class="code-dot" data-slide="1"></span>
+                    </div>
                 </div>
-                <div class="visual-element"></div>
-                <div class="visual-element"></div>
-                <div class="visual-element"></div>
             </div>
         </header>
         
-        <section class="features-section">
-            <div class="features">
+        <section id="features" class="features-section">
+            <h2>Engineered for <span class="highlight-text">Performance</span></h2>
+            <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-bolt"></i>
                     </div>
-                    <div class="feature-content">
-                        <h3>Unbeatable Speed</h3>
-                        <p>Scripts load instantly thanks to ultra-reduced size and optimized performance.</p>
-                    </div>
-                    <div class="feature-number">01</div>
+                    <h3>Unbeatable Speed</h3>
+                    <p>Scripts load instantly thanks to ultra-reduced size and optimized performance.</p>
                 </div>
                 
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-cloud"></i>
                     </div>
-                    <div class="feature-content">
-                        <h3>Cloud Synchronization</h3>
-                        <p>Sync to Dropbox, OneDrive, Google Drive, or WebDAV. Work seamlessly across all your browsers.</p>
-                    </div>
-                    <div class="feature-number">02</div>
+                    <h3>Cloud Synchronization</h3>
+                    <p>Sync to Dropbox, OneDrive, Google Drive, or WebDAV. Work seamlessly across all your browsers.</p>
                 </div>
                 
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-feather-alt"></i>
                     </div>
-                    <div class="feature-content">
-                        <h3>Minimalist Philosophy</h3>
-                        <p>13KB limit ensures optimal performance without sacrificing functionality.</p>
+                    <h3>Minimalist Philosophy</h3>
+                    <p>13KB limit ensures optimal performance without sacrificing functionality.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
                     </div>
-                    <div class="feature-number">03</div>
+                    <h3>Modern Zedata Format</h3>
+                    <p>Our clean format designed with enhanced security features and improved readability.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Full Compatibility</h3>
+                    <p>Works with traditional userscript formats, ensuring you can use scripts from any source.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-ghost"></i>
+                    </div>
+                    <h3>Zero Background Impact</h3>
+                    <p>Only activates when needed, completely disappearing from task manager when not in use.</p>
                 </div>
             </div>
         </section>
         
-        <section class="monkeyplace-section">
-            <div class="monkeyplace-content">
-                <h2>Discover <span class="highlight-text">Monkeyplace</span></h2>
-                <p class="monkeyplace-description">
-                    Monkeyplace is your trusted source for high-quality userscripts. Every script is verified and secure, 
-                    written in our modern Zedata Block format while maintaining full compatibility with traditional Metadata Block scripts.
-                </p>
-                
-                <div class="script-formats">
-                    <div class="format-card">
-                        <div class="format-icon">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-                        <div class="format-content">
-                            <h3>Zedata Block</h3>
-                            <p>Our modern, clean format designed for Zedmonkey with enhanced security features and improved readability.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="format-card">
-                        <div class="format-icon">
-                            <i class="fas fa-code"></i>
-                        </div>
-                        <div class="format-content">
-                            <h3>Metadata Block</h3>
-                            <p>Full compatibility with traditional userscript formats, ensuring you can use scripts from any source.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="monkeyplace-cta">
-                    <p class="monkeyplace-note">
-                        <i class="fas fa-info-circle"></i> While Monkeyplace scripts are verified for security, 
-                        Zedmonkey supports installing scripts from any source with ease.
-                    </p>
-                </div>
+        <section id="comparison" class="comparison-section">
+            <h2>Zedmonkey vs. The Competition</h2>
+            <p class="comparison-intro">
+                Hard data doesn't lie. See how Zedmonkey outperforms other userscript managers in every critical metric.
+            </p>
+            
+            <div class="comparison-table-container">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th class="highlight-column">Zedmonkey</th>
+                            <th>Tampermonkey</th>
+                            <th>Violentmonkey</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Self Time (ms)</td>
+                            <td class="highlight-column">0.2</td>
+                            <td>14.1</td>
+                            <td>0.7</td>
+                        </tr>
+                        <tr>
+                            <td>Total Time (ms)</td>
+                            <td class="highlight-column">0.2</td>
+                            <td>14.8</td>
+                            <td>202.8</td>
+                        </tr>
+                        <tr>
+                            <td>Memory Usage (KB)</td>
+                            <td class="highlight-column">30,500</td>
+                            <td>57,752</td>
+                            <td>41,080</td>
+                        </tr>
+                        <tr>
+                            <td>JavaScript Memory (KB)</td>
+                            <td class="highlight-column">1,426</td>
+                            <td>4,573</td>
+                            <td>3,448</td>
+                        </tr>
+                        <tr>
+                            <td>CPU Usage (%)</td>
+                            <td class="highlight-column">0.0</td>
+                            <td>0.1</td>
+                            <td>0.0</td>
+                        </tr>
+                        <tr>
+                            <td>Background Processes</td>
+                            <td class="highlight-column">None when inactive</td>
+                            <td>Always running</td>
+                            <td>Always running</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="comparison-note">
+                <i class="fas fa-info-circle"></i>
+                <p>All measurements taken on a Windows 10 PC using Microsoft Edge browser and www.google.com as test page. Lower values are better.</p>
             </div>
         </section>
+        
+        <section id="zedata" class="zedata-section">
+            <h2>Introducing <span class="highlight-text">Zedata Block</span></h2>
+            <p class="zedata-intro">
+                A revolutionary format that makes traditional Metadata Blocks obsolete. Designed for speed and efficiency. </p>
+            
+            <div class="zedata-comparison">
+                <div class="zedata-card">
+                    <div class="zedata-header">
+                        <h3>Metadata Block</h3>
+                        <span class="zedata-size">317 bytes</span>
+                    </div>
+                    <div class="zedata-content">
+                        <pre><code>// ==UserScript==
+// @name         Hello World Script
+// @namespace    zedmonkey
+// @version      1.0.0
+// @description  Hello World!
+// @author       Zedmonkey User
+// @match        *://*/*
+// @grant        none
+// ==/UserScript==</code></pre>
+                    </div>
+                    <div class="zedata-footer">
+                        <span class="zedata-label">Traditional Format</span>
+                        <span class="zedata-badge negative">Bloated</span>
+                    </div>
+                </div>
+                
+                <div class="comparison-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                    <span class="reduction-badge">58.65% Smaller</span>
+                </div>
+                
+                <div class="zedata-card highlight">
+                    <div class="zedata-header">
+                        <h3>Zedata Block</h3>
+                        <span class="zedata-size">131 bytes</span>
+                    </div>
+                    <div class="zedata-content">
+                        <pre><code>script,HelloWorldScript,zedmonkey,1.0.0,HelloWorld,ZedmonkeyUser,*,none</code></pre>
+                    </div>
+                    <div class="zedata-footer">
+                        <span class="zedata-label">Zedmonkey Format</span>
+                        <span class="zedata-badge positive">Optimized</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="zedata-stats">
+                <div class="zedata-stat">
+                    <div class="zedata-stat-value">58.65%</div>
+                    <div class="zedata-stat-label">Size Reduction</div>
+                    <div class="zedata-stat-desc">Less data to transfer and store</div>
+                </div>
+                
+                <div class="zedata-stat">
+                    <div class="zedata-stat-value">70-80%</div>
+                    <div class="zedata-stat-label">Faster Parsing</div>
+                    <div class="zedata-stat-desc">Simple comma-based format vs line-by-line parsing</div>
+                </div>
+                
+                <div class="zedata-stat">
+                    <div class="zedata-stat-value">~40%</div>
+                    <div class="zedata-stat-label">Memory Reduction</div>
+                    <div class="zedata-stat-desc">More compact structure means less RAM usage</div>
+                </div>
+            </div>
+            
+            <div class="zedata-explanation">
+                <h3>The Science Behind Zedata</h3>
+                <p>
+                    Zedata Block is not just a cosmetic change—it's a fundamental rethinking of how userscript metadata should work. 
+                    By eliminating redundant syntax and using a position-based approach instead of key-value pairs, we've created 
+                    a format that's both smaller and faster to parse.
+                </p>
+                <div class="zedata-formula">
+                    <span class="formula-text">Reduction = (317 - 131) / 317 × 100 ≈ 58.65%</span>
+                </div>
+                <p>
+                    While other userscript managers struggle with bloated metadata blocks, Zedmonkey's Zedata format 
+                    delivers lightning-fast performance without sacrificing compatibility or features.
+                </p>
+                <p>
+                    Full documentation coming soon as we focus on optimizing Zedmonkey to its maximum potential. 
+                    Zedmonkey already supports scripts using Zedata Block while maintaining backward compatibility with 
+                    traditional Metadata Block format (though at the cost of carrying unnecessary overhead).
+                </p>
+            </div>
+        </section>
+
+    </section>
+        
+    <section id="contribute" class="contribute-section">
+        <h2>Join the <span class="highlight-text">Zedmonkey</span> Community</h2>
+        <p class="contribute-intro">
+            We believe in open collaboration and continuous improvement. Help us make Zedmonkey even better.
+        </p>
+        
+        <div class="contribute-grid">
+            <div class="contribute-card">
+                <div class="contribute-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Security Auditing</h3>
+                <p>
+                    We invite security professionals to audit our code for vulnerabilities. Your expertise helps us 
+                    build a more secure product for everyone.
+                </p>
+                <div class="contribute-guidelines">
+                    <h4>Responsible Auditing Guidelines:</h4>
+                    <ul>
+                        <li>All testing must be conducted in local environments only</li>
+                        <li>Never compromise real user security or data</li>
+                        <li>Report findings privately before public disclosure</li>
+                        <li>Provide detailed reproduction steps for any issues found</li>
+                    </ul>
+                </div>
+                <a href="https://github.com/livrasand/Zedmonkey/issues" class="contribute-link">
+                    <i class="fas fa-external-link-alt"></i> Submit Security Findings
+                </a>
+            </div>
+            
+            <div class="contribute-card">
+                <div class="contribute-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3>Performance Optimization</h3>
+                <p>
+                    Help us push the boundaries of what's possible. We're looking for innovative ways to make 
+                    Zedmonkey and Zedata Block even faster, more efficient, and lighter.
+                </p>
+                <div class="contribute-ideas">
+                    <h4>Areas for Improvement:</h4>
+                    <ul>
+                        <li>Script parsing and execution optimization</li>
+                        <li>Memory usage reduction techniques</li>
+                        <li>Zedata Block format enhancements</li>
+                        <li>Browser API utilization improvements</li>
+                    </ul>
+                </div>
+                <a href="https://github.com/livrasand/Zedmonkey/pulls" class="contribute-link">
+                    <i class="fas fa-external-link-alt"></i> Submit Performance Improvements
+                </a>
+            </div>
+            
+            <div class="contribute-card">
+                <div class="contribute-icon">
+                    <i class="fas fa-paint-brush"></i>
+                </div>
+                <h3>UI/UX Contributions</h3>
+                <p>
+                    Have a flair for design? Help us enhance the user experience and visual appeal of Zedmonkey 
+                    while maintaining our commitment to minimalism and performance.
+                </p>
+                <div class="contribute-ideas">
+                    <h4>Contribution Areas:</h4>
+                    <ul>
+                        <li>Extension interface improvements</li>
+                        <li>Website design enhancements</li>
+                        <li>Accessibility optimizations</li>
+                        <li>Dark/light theme implementations</li>
+                    </ul>
+                </div>
+                <a href="https://github.com/livrasand/Zedmonkey" class="contribute-link">
+                    <i class="fas fa-external-link-alt"></i> Contribute UI/UX Improvements
+                </a>
+            </div>
+        </div>
+        
+        <div class="contribute-cta">
+            <p>Every contribution, no matter how small, helps make Zedmonkey better for everyone.</p>
+            <a href="https://github.com/livrasand/Zedmonkey" class="secondary-btn">
+                <i class="fab fa-github"></i> View on GitHub
+            </a>
+        </div>
+    </section>
+        
+        <section class="cta-section">
+            <div class="cta-content">
+                <h2>Ready to upgrade your scripting experience?</h2>
+                <a href="https://chromewebstore.google.com/detail/ahppjceidfcinboledomgmbmnafdidll" class="cta-button">
+                    <i class="fas fa-download"></i> Download Zedmonkey
+                </a>
+            </div>
+        </section>
+
+        
         
         <footer>
             <div class="footer-content">
+                <div class="logo-container">
+                    <img src="src/icons/icon128.png" alt="Zedmonkey Logo" class="logo">
+                    <span>Zedmonkey</span>
+                </div>
                 <div class="footer-links">
                     <a href="privacy.html">Privacy</a>
                     <a href="terms.html">Terms</a>
+                    <a href="https://github.com/livrasand/Zedmonkey/issues">Report Issues</a>
                 </div>
-                <p>Crafted with <i class="fas fa-heart"></i> for developers by livrasand</p>
                 <div class="social-links">
-                    <a href="https://github.com/livrasand" class="social-link"><i class="fab fa-github"></i></a>
+                    <a href="https://github.com/livrasand/Zedmonkey" class="social-link"><i class="fab fa-github"></i></a>
                 </div>
+            </div>
+            <div class="footer-copyright">
+                <p>© 2025 Zedmonkey Project. Lightweight by design, powerful by default.</p>
             </div>
         </footer>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dots = document.querySelectorAll('.code-dot');
+            const slides = document.querySelectorAll('.code-slide');
+            const formatName = document.querySelector('.format-name');
+            const copyBtn = document.querySelector('.copy-btn');
+            let currentSlide = 0;
+            let interval;
+            
+            // Format names and sizes
+            const formats = [
+                "Metadata Block (0.317 KB)",
+                "Zedata Block (0.13 KB)"
+            ];
+            
+            // Function to change slide
+            function changeSlide(index) {
+                // Remove active class from all slides and dots
+                slides.forEach(slide => {
+                    slide.classList.remove('active');
+                    slide.classList.remove('inactive');
+                    slide.style.position = 'absolute';
+                    slide.style.height = '0';
+                    slide.style.opacity = '0';
+                    slide.style.pointerEvents = 'none';
+                });
+                
+                dots.forEach(dot => dot.classList.remove('active'));
+                
+                // Add active class to current slide and dot
+                slides[index].classList.add('active');
+                slides[index].style.position = 'relative';
+                slides[index].style.height = 'auto';
+                slides[index].style.opacity = '1';
+                slides[index].style.pointerEvents = 'auto';
+                dots[index].classList.add('active');
+                
+                // Update format name
+                formatName.textContent = formats[index];
+                
+                // Show copy button only on the last slide
+                copyBtn.style.display = index === 2 ? 'inline-block' : 'none';
+                
+                // If we're on the last slide, stop the auto rotation
+                if (index === 2) {
+                    clearInterval(interval);
+                }
+                
+                currentSlide = index;
+            }
+
+            // Add click event to dots
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    changeSlide(index);
+                    // Only restart auto slide if we're not on the last slide
+                    if (index !== 2) {
+                        clearInterval(interval);
+                        startAutoSlide();
+                    }
+                });
+            });
+
+            // Add click event to copy button
+            copyBtn.addEventListener('click', function() {
+                const codeToCopy = slides[2].querySelector('code').textContent;
+                navigator.clipboard.writeText(codeToCopy).then(() => {
+                    // Visual feedback for copy
+                    const originalText = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalText;
+                    }, 2000);
+                });
+            });
+
+            // Auto slide function
+            function startAutoSlide() {
+                interval = setInterval(() => {
+                    let nextSlide = (currentSlide + 1) % slides.length;
+                    changeSlide(nextSlide);
+                    // If we reach the last slide, stop auto rotation
+                    if (nextSlide === 2) {
+                        clearInterval(interval);
+                    }
+                }, 5000); // Change slide every 5 seconds
+            }
+
+            // Start auto slide
+            startAutoSlide();
+        });
+    </script>
+</body>
+</html>
 </body>
 </html>
