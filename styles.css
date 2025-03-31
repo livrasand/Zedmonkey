@@ -402,6 +402,7 @@ a {
     padding: 1.5rem;
     font-family: var(--font-mono);
     font-size: 0.9rem;
+    width: 100%;
     line-height: 1.5;
     color: #E0E0E0;
     overflow-x: auto;
@@ -620,68 +621,72 @@ footer {
 }
 
 /* Responsive Media Queries */
+/* Base Styles */
+:root {
+    --primary: #3D5AFE;
+    --primary-dark: #0031CA;
+    --primary-light: #8187FF;
+    --accent: #FFD600;
+    --background: #0e1117;
+    --card-bg: #161b22;
+    --text-primary: #f0f6fc;
+    --text-secondary: #8b949e;
+    --border: #30363d;
+    --success: #00C853;
+    --warning: #f0883e;
+    --code-bg: #0d1117;
+    --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* ... existing code ... */
+
+/* Media Queries for Responsive Design */
 @media (max-width: 1200px) {
     .container {
-        max-width: 1000px;
-    }
-    
-    .hero {
-        gap: 3rem;
+        max-width: 95%;
     }
 }
 
 @media (max-width: 992px) {
-    .container {
-        max-width: 100%;
-    }
-    
     .hero {
         grid-template-columns: 1fr;
-        text-align: center;
-        gap: 3rem;
-    }
-    
-    .hero-content {
-        order: 2;
+        gap: 2rem;
+        padding: 4rem 0;
     }
     
     .hero-visual {
-        order: 1;
+        order: -1;
     }
     
-    .hero-stats {
-        justify-content: center;
+    .hero-content {
+        text-align: center;
+        align-items: center;
     }
     
-    .hero-actions {
-        justify-content: center;
+    .zedata-comparison {
+        flex-direction: column;
+        gap: 2rem;
     }
     
-    .compatibility {
-        justify-content: center;
+    .comparison-arrow {
+        transform: rotate(90deg);
+        margin: 1rem 0;
     }
     
     .features-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .contribute-grid {
+        grid-template-columns: 1fr;
     }
 }
 
 @media (max-width: 768px) {
-    .navbar {
-        flex-direction: column;
-        gap: 1rem;
-        padding: 1rem 0;
-    }
-    
-    .nav-links {
-        width: 100%;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 1.5rem;
-    }
-    
     h1 {
-        font-size: 2.8rem;
+        font-size: 2.5rem;
     }
     
     h2 {
@@ -693,58 +698,122 @@ footer {
     }
     
     .hero-stats {
-        flex-wrap: wrap;
-    }
-    
-    .hero-actions {
         flex-direction: column;
+        gap: 1.5rem;
     }
     
-    .primary-btn, .secondary-btn {
-        width: 100%;
+    .navbar {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .nav-links {
+        flex-wrap: wrap;
         justify-content: center;
+        gap: 1rem;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .comparison-table-container {
+        overflow-x: auto;
+    }
+    
+    .comparison-table {
+        min-width: 600px;
     }
     
     .footer-content {
         flex-direction: column;
-        gap: 2rem;
+        gap: 1.5rem;
         text-align: center;
     }
     
-    .footer-links {
-        flex-wrap: wrap;
+    .logo-container {
         justify-content: center;
     }
 }
 
 @media (max-width: 576px) {
     h1 {
-        font-size: 2.2rem;
+        font-size: 2rem;
     }
     
-    .hero {
-        padding: 4rem 0;
+    h2 {
+        font-size: 1.75rem;
     }
     
-    .features-section, 
-    .comparison-section, 
-    .cta-section {
-        padding: 4rem 0;
-    }
-    
-    .comparison-table th, 
-    .comparison-table td {
-        padding: 0.8rem;
-        font-size: 0.85rem;
-    }
-    
-    .comparison-note {
+    .hero-actions {
         flex-direction: column;
-        text-align: center;
+        width: 100%;
+    }
+    
+    .primary-btn, .secondary-btn {
+        width: 100%;
+    }
+    
+    .compatibility {
+        flex-wrap: wrap;
+        justify-content: center;
     }
     
     .browser-badge {
-        font-size: 0.75rem;
+        margin: 0.5rem;
+    }
+    
+    .zedata-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .code-snippet {
+        width: 100%;
+    }
+}
+
+/* Hamburger Menu for Mobile */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    cursor: pointer;
+}
+
+.menu-toggle span {
+    display: block;
+    height: 3px;
+    width: 100%;
+    background-color: var(--text-primary);
+    border-radius: 3px;
+    transition: var(--transition);
+}
+
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: flex;
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+    }
+    
+    .nav-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem 0;
+    }
+    
+    .nav-links.active {
+        display: flex;
+    }
+    
+    .navbar {
+        padding: 1.5rem 0;
+        position: relative;
     }
 }
 
@@ -810,7 +879,7 @@ footer {
 }
 
 .code-slide:first-child {
-    position: relative;
+    position: absolute;
     height: auto;
     opacity: 1;
     transform: translateX(0);
@@ -875,8 +944,10 @@ footer {
 }
 
 .code-slide code {
-    white-space: pre-wrap;       /* Permite que el texto se ajuste */
-    word-wrap: break-word;       /* Rompe palabras largas si es necesario */
+    white-space: pre-wrap;       /* Permite que el código se ajuste */
+    word-wrap: break-word;       /* Rompe palabras largas */
+    overflow-wrap: break-word;   /* Asegura que el texto se ajuste */
+    max-width: 100%;
     display: block;
     line-height: 1.5;
 }
@@ -1091,6 +1162,14 @@ footer {
         max-width: 100%;
         width: 100%;
     }
+
+    .code-slide {
+        padding: 1rem;
+    }
+    
+    .code-slide code {
+        font-size: 0.8rem;
+    }
 }
 
 @media (max-width: 576px) {
@@ -1110,6 +1189,19 @@ footer {
     
     .formula-text {
         font-size: 0.9rem;
+    }
+
+    .code-snippet {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .code-slide {
+        padding: 0.75rem;
+    }
+    
+    .code-slide code {
+        font-size: 0.7rem;
     }
 }
 

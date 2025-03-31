@@ -26,6 +26,11 @@
                 <img src="src/icons/icon128.png" alt="Zedmonkey Logo" class="logo">
                 <span>Zedmonkey</span>
             </div>
+            <div class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
             <div class="nav-links">
                 <a href="#features" class="nav-link">Features</a>
                 <a href="#comparison" class="nav-link">Comparison</a>
@@ -469,7 +474,7 @@
                 
                 // Add active class to current slide and dot
                 slides[index].classList.add('active');
-                slides[index].style.position = 'relative';
+                slides[index].style.position = 'absolute';
                 slides[index].style.height = 'auto';
                 slides[index].style.opacity = '1';
                 slides[index].style.pointerEvents = 'auto';
@@ -479,10 +484,10 @@
                 formatName.textContent = formats[index];
                 
                 // Show copy button only on the last slide
-                copyBtn.style.display = index === 2 ? 'inline-block' : 'none';
+                copyBtn.style.display = index === 1 ? 'inline-block' : 'none';
                 
                 // If we're on the last slide, stop the auto rotation
-                if (index === 2) {
+                if (index === 1) {
                     clearInterval(interval);
                 }
                 
@@ -528,6 +533,40 @@
 
             // Start auto slide
             startAutoSlide();
+            
+            // Mobile menu toggle
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function() {
+                    navLinks.classList.toggle('active');
+                    this.classList.toggle('active');
+                });
+            }
+            
+            // Close mobile menu when clicking on a link
+            const navLinkElements = document.querySelectorAll('.nav-link, .download-nav-btn');
+            navLinkElements.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        navLinks.classList.remove('active');
+                        if (menuToggle) {
+                            menuToggle.classList.remove('active');
+                        }
+                    }
+                });
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    navLinks.classList.remove('active');
+                    if (menuToggle) {
+                        menuToggle.classList.remove('active');
+                    }
+                }
+            });
         });
     </script>
 </body>
