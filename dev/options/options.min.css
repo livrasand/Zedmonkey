@@ -1,0 +1,160 @@
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --text-color: #333;
+    --bg-color: #f9f9f9;
+    --border-color: #ddd;
+    --success-color: #27ae60;
+    --error-color: #e74c3c
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    line-height: 1.5
+}
+
+.container {
+    margin: 0 auto;
+    max-width: 800px;
+    padding: 20px
+}
+
+header {
+    margin-bottom: 30px;
+    text-align: center
+}
+
+header h1 {
+    color: var(--primary-color);
+    font-size: 28px;
+    margin-bottom: 8px
+}
+
+header p {
+    color: #666;
+    font-size: 16px
+}
+
+.settings-section {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+    margin-bottom: 20px;
+    padding: 20px
+}
+
+.settings-section h2 {
+    border-bottom: 1px solid var(--border-color);
+    color: var(--primary-color);
+    font-size: 18px;
+    margin-bottom: 16px;
+    padding-bottom: 8px
+}
+
+.setting-item {
+    margin-bottom: 16px
+}
+
+.setting-item:last-child {
+    margin-bottom: 0
+}
+
+.setting-item label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 6px
+}
+
+.setting-description {
+    color: #666;
+    font-size: 12px;
+    margin-top: 4px
+}
+
+input[type=number],
+input[type=text],
+select {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 14px;
+    padding: 8px 12px;
+    width: 100%
+}
+
+input[type=checkbox] {
+    margin-right: 8px
+}
+
+.buttons-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px
+}
+
+.btn {
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    padding: 10px 16px;
+    transition: background-color .2s
+}
+
+.btn.primary {
+    background-color: var(--secondary-color);
+    color: #fff
+}
+
+.btn.primary:hover {
+    background-color: #2980b9
+}
+
+.btn.secondary {
+    background-color: #ecf0f1;
+    color: var(--primary-color)
+}
+
+.btn.secondary:hover {
+    background-color: #dde4e6
+}
+
+.btn.danger {
+    background-color: var(--error-color);
+    color: #fff
+}
+
+.btn.danger:hover {
+    background-color: #c0392b
+}
+
+footer {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px
+}
+
+.status-message {
+    border-radius: 4px;
+    font-size: 14px;
+    padding: 8px 12px
+}
+
+.status-message.success {
+    background-color: rgba(39, 174, 96, .2);
+    color: var(--success-color)
+}
+
+.status-message.error {
+    background-color: rgba(231, 76, 60, .2);
+    color: var(--error-color)
+}

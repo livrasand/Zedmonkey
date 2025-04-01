@@ -1,0 +1,28 @@
+function parseZedataBlock(r) {
+    r = r.match(/\[script\]([\s\S]*?)(?=\[|\n\n|$)/);
+    if (!r) return null;
+    var t, a = {};
+    for (t of r[1].trim().split("\n")) {
+        var [e, s] = t.split("=").map(r => r.trim());
+        e && s && (a[e] = s.replace(/^["'](.*)["']$/, "$1"))
+    }
+    var n;
+    for (n of ["name", "namespace", "version", "match"])
+        if (!a[n]) return null;
+    return a
+}
+
+function parseUserscriptMetadata(r) {
+    let t = r.match(/\/\/\s*==UserScript==([\s\S]*?)\/\/\s*==\/UserScript==/);
+    if (!t) return null;
+    var a, e, s, n = {};
+    for (a of t[1].trim().split("\n")) {
+        let r = a.match(/\/\/\s*@(\w+)\s+(.*)/);
+        r && ([, e, s] = r, n[e] ? Array.isArray(n[e]) ? n[e].push(s) : n[e] = [n[e], s] : n[e] = s)
+    }
+    return n
+}
+export {
+    parseZedataBlock,
+    parseUserscriptMetadata
+};
