@@ -565,18 +565,18 @@ footer {
 }
 
 footer a {
-    color: var(--accent-color);
+    color: var(--text-muted);
     position: relative;
     text-decoration: none;
     transition: all var(--transition-fast)
 }
 
 footer a:hover {
-    color: var(--accent-hover)
+    color: var(--text-color)
 }
 
 footer a:after {
-    background-color: var(--accent-color);
+    background-color: var(--text-color);
     bottom: -1px;
     content: "";
     height: 1px;
