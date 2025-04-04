@@ -1,3 +1,12 @@
+// Listen for injection messages from background
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === "injectScript" && message.resourcePath) {
+        // Forward to background script for proper handling
+        chrome.runtime.sendMessage(message);
+        return true;
+    }
+});
+
 function detectUserscripts() {
   var e;
   for (e of document.querySelectorAll("script")) {
@@ -297,6 +306,17 @@ function addUserscriptLinkHandlers() {
       }))
   })
 }
+
+// Initial injection for persisted scripts
+chrome.storage.sync.get({ injectionEnabled: true }, ({ injectionEnabled }) => {
+    if (injectionEnabled) {
+        chrome.runtime.sendMessage({ 
+            action: "getScriptsForCurrentPage",
+            url: window.location.href
+        });
+    }
+});
+
 chrome.runtime.onMessage.addListener((e, t, o) => {
   if ("detectUserscript" === e.action) {
       let t = detectUserscripts();

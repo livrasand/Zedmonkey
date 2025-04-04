@@ -111,23 +111,63 @@ function updateScriptCountBadge(r) {
     })
 }
 
-function injectScript(t, r) {
-    chrome.storage.sync.get("injectionEnabled", e => {
-        !1 !== e.injectionEnabled ? !1 !== r.enabled && chrome.scripting.executeScript({
-            target: {
-                tabId: t
-            },
-            func: e => {
+// Update storage function to use valid resource paths
+async function storeScriptAsResource(script) {
+    if (!script.id) script.id = Date.now().toString();
+    
+    const resourcePath = `scripts/${script.id}.js`;
+    await chrome.storage.local.set({
+        [resourcePath]: script.content
+    });
+    
+    // Verify storage immediately
+    const result = await chrome.storage.local.get(resourcePath);
+    console.log('Storage verification:', result[resourcePath] ? 'OK' : 'MISSING');
+    
+    return resourcePath;
+}
+
+// Simplified injection using direct storage access
+async function injectScript(tabId, script) {
+    const resourcePath = await storeScriptAsResource(script);
+    const result = await chrome.storage.local.get(resourcePath);
+    const scriptContent = result[resourcePath];
+
+    try {
+        // Try main world execution first
+        await chrome.scripting.executeScript({
+            target: {tabId: tabId, allFrames: true},
+            func: (code) => {
                 try {
-                    new Function(e)()
-                } catch (e) {
-                    console.error("Script injection error:", e)
+                    const scriptEl = document.createElement('script');
+                    scriptEl.textContent = code;
+                    (document.head || document.documentElement).appendChild(scriptEl);
+                    scriptEl.remove();
+                } catch(e) {
+                    console.warn('MAIN world injection failed, trying isolated...');
+                    new Function(code)();
                 }
             },
-            args: [r.content]
-        }).catch(e => console.error("Injection error:", e)) : console.log("Script injection is disabled")
-    })
+            args: [scriptContent],
+            world: 'MAIN'
+        });
+    } catch (error) {
+        // Fallback to isolated world
+        await chrome.scripting.executeScript({
+            target: {tabId: tabId, allFrames: true},
+            func: (code) => {
+                try {
+                    new Function(code)();
+                } catch(e) {
+                    console.error('Isolated world execution error:', e);
+                }
+            },
+            args: [scriptContent],
+            world: 'ISOLATED'
+        });
+    }
 }
+
 chrome.tabs.onActivated.addListener(e => {
     updateScriptCountBadge(e.tabId)
 }), chrome.tabs.onUpdated.addListener((e, t, r) => {
@@ -154,6 +194,147 @@ chrome.tabs.onActivated.addListener(e => {
             error: e.message
         }));
         else if ("getMatchedScripts" === c.action) getScripts().then(e => {
+            let t = c.url;
+            e = e.filter(e => isScriptMatchingUrl(e, t));
+            o({
+                scripts: e
+            })
+        }).catch(e => o({
+            error: e.message
+        }));
+        else if ("getScriptContent" === c.action) getScripts().then(e => {
+            e = e.find(e => e.id === c.scriptId);
+            o(e ? {
+                content: e.content
+            } : {
+                error: "Script not found"
+            })
+        }).catch(e => o({
+            error: e.message
+        }));
+        else if ("addScript" === c.action) {
+            var t = c.scriptContent;
+            let e;
+            try {
+                saveScript({
+                    content: t,
+                    metadata: e = (e = (e = parseZedataBlock(t)) || parseUserscriptMetadata(t)) || {
+                        name: "Untitled Script",
+                        version: "1.0",
+                        match: ["*://*/*"]
+                    }
+                }).then(e => o({
+                    success: !0,
+                    scriptId: e.id,
+                    name: e.metadata.name
+                })).catch(e => o({
+                    success: !1,
+                    error: e.message
+                }))
+            } catch (e) {
+                console.error("Error parsing script:", e), o({
+                    success: !1,
+                    error: "Error parsing script: " + e.message
+                })
+            }
+        } else if ("updateScriptContent" === c.action) getScripts().then(t => {
+            t = t.find(e => e.id === c.scriptId);
+            if (t) {
+                t.content = c.scriptContent;
+                try {
+                    let e = parseZedataBlock(c.scriptContent);
+                    (e = e || parseUserscriptMetadata(c.scriptContent)) && (t.metadata = e)
+                } catch (e) {
+                    console.warn("Could not update metadata:", e)
+                }
+                return saveScript(t)
+            }
+            throw new Error("Script not found")
+        }).then(e => o({
+            success: !0,
+            scriptId: e.id,
+            name: e.metadata.name
+        })).catch(e => o({
+            success: !1,
+            error: e.message
+        }));
+        else if ("removeScript" === c.action) removeScript(c.scriptId).then(() => o({
+            success: !0
+        })).catch(e => o({
+            success: !1,
+            error: e.message
+        }));
+        else if ("toggleScriptEnabled" === c.action || "toggleScript" === c.action) {
+            let {
+                scriptId: t,
+                enabled: r
+            } = c;
+            getScripts().then(e => {
+                e = e.find(e => e.id === t);
+                if (e) return e.enabled = r, saveScript(e);
+                throw new Error("Script not found")
+            }).then(() => {
+                o({
+                    success: !0
+                }), chrome.tabs.query({
+                    active: !0,
+                    currentWindow: !0
+                }, e => {
+                    e && e[0] && updateScriptCountBadge(e[0].id)
+                })
+            }).catch(e => o({
+                success: !1,
+                error: e.message
+            }))
+        } else if ("setInjectionState" === c.action) {
+            let t = c.enabled;
+            chrome.storage.sync.set({
+                injectionEnabled: t
+            }, () => {
+                o({
+                    success: !0
+                }), chrome.tabs.query({}, e => {
+                    e.forEach(e => {
+                        t ? updateScriptCountBadge(e.id) : chrome.action.setBadgeText({
+                            tabId: e.id,
+                            text: ""
+                        })
+                    })
+                })
+            })
+        } else if ("openScriptInEditor" === c.action) try {
+            chrome.storage.local.set({
+                tempScriptContent: c.scriptContent
+            }, () => {
+                chrome.tabs.create({
+                    url: chrome.runtime.getURL("editor/editor.html?loadTemp=true")
+                }), o({
+                    success: !0
+                })
+            })
+        } catch (e) {
+            console.error("Error opening editor:", e), o({
+                success: !1,
+                error: e.message
+            })
+        } else if (c.action === "getScriptsForCurrentPage") {
+            getScripts().then(scripts => {
+                const matchedScripts = scripts.filter(script => 
+                    script.enabled && isScriptMatchingUrl(script, c.url)
+                );
+                
+                // Send scripts to content script for safe injection
+                matchedScripts.forEach(script => {
+                    chrome.tabs.sendMessage(e.tab.id, {
+                        action: "injectScript",
+                        scriptContent: script.content
+                    });
+                });
+                
+                o({ count: matchedScripts.length });
+            }).catch(error => o({ error: error.message }));
+            return true;
+        } else if ("getMatchedScripts" === c.action) getScripts().then(e => {
             let t = c.url;
             e = e.filter(e => isScriptMatchingUrl(e, t));
             o({
