@@ -83,33 +83,32 @@ function isScriptMatchingUrl(e, r) {
 function updateScriptCountBadge(r) {
     r && chrome.tabs.get(r, t => {
         !chrome.runtime.lastError && t && t.url && ([/^chrome:\/\//, /^chrome-extension:\/\//, /^moz-extension:\/\//, /^about:/, /^edge:/, /^opera:/, /^extension:/, /^file:\/\/.*\/AppData\/Local\//, /^https:\/\/chrome\.google\.com\/webstore/, /^https:\/\/addons\.mozilla\.org/, /^https:\/\/microsoftedge\.microsoft\.com\/addons/].some(e => e.test(t.url)) ? chrome.action.setBadgeText({
-            tabId: r,
-            text: ""
-        }) : chrome.storage.sync.get("injectionEnabled", e => {
-            !1 !== e.injectionEnabled ? getScripts().then(e => {
-                e = e.filter(e => isScriptMatchingUrl(e, t.url) && !1 !== e.enabled);
-                0 < e.length ? (chrome.action.setBadgeText({
-                    tabId: r,
-                    text: e.length.toString()
-                }), chrome.action.setBadgeBackgroundColor({
-                    tabId: r,
-                    color: "#3498db"
-                })) : chrome.action.setBadgeText({
-                    tabId: r,
-                    text: ""
-                })
-            }).catch(e => {
-                console.error("Error getting scripts for badge:", e), chrome.action.setBadgeText({
-                    tabId: r,
-                    text: ""
-                })
-            }) : chrome.action.setBadgeText({
+        tabId: r,
+        text: ""
+    }) : chrome.storage.sync.get("injectionEnabled", e => {
+        !1 !== e.injectionEnabled ? getScripts().then(e => {
+            e = e.filter(e => isScriptMatchingUrl(e, t.url) && !1 !== e.enabled);
+            0 < e.length ? (chrome.action.setBadgeText({
+                tabId: r,
+                text: e.length.toString()
+            }), chrome.action.setBadgeBackgroundColor({
+                tabId: r,
+                color: "#3498db"
+            })) : chrome.action.setBadgeText({
                 tabId: r,
                 text: ""
             })
-        }))
-    })
-}
+        }).catch(e => {
+            console.error("Error getting scripts for badge:", e), chrome.action.setBadgeText({
+                tabId: r,
+                text: ""
+            })
+        }) : chrome.action.setBadgeText({
+            tabId: r,
+            text: ""
+        })
+    }))
+})}
 
 // Update storage function to use valid resource paths
 async function storeScriptAsResource(script) {
@@ -127,43 +126,42 @@ async function storeScriptAsResource(script) {
     return resourcePath;
 }
 
-// Simplified injection using direct storage access
 async function injectScript(tabId, script) {
     const resourcePath = await storeScriptAsResource(script);
     const result = await chrome.storage.local.get(resourcePath);
     const scriptContent = result[resourcePath];
 
     try {
-        // Try main world execution first
+        // Use sandboxed execution with iife
         await chrome.scripting.executeScript({
             target: {tabId: tabId, allFrames: true},
-            func: (code) => {
-                try {
-                    const scriptEl = document.createElement('script');
-                    scriptEl.textContent = code;
-                    (document.head || document.documentElement).appendChild(scriptEl);
-                    scriptEl.remove();
-                } catch(e) {
-                    console.warn('MAIN world injection failed, trying isolated...');
-                    new Function(code)();
-                }
+            func: (content) => {
+                const script = document.createElement('script');
+                script.textContent = `(function(){${content}})();`;
+                script.setAttribute('type', 'module');
+                script.nonce = document.querySelector('script[nonce]')?.nonce || '';
+                script.crossOrigin = 'anonymous';
+                (document.head || document.documentElement).appendChild(script);
+                script.remove();
             },
             args: [scriptContent],
             world: 'MAIN'
         });
     } catch (error) {
-        // Fallback to isolated world
+        console.error('Main world injection failed:', error);
+        // Fallback to iframe sandbox
         await chrome.scripting.executeScript({
-            target: {tabId: tabId, allFrames: true},
-            func: (code) => {
-                try {
-                    new Function(code)();
-                } catch(e) {
-                    console.error('Isolated world execution error:', e);
-                }
+            target: {tabId: tabId},
+            func: (content) => {
+                const sandbox = document.createElement('iframe');
+                sandbox.style.display = 'none';
+                sandbox.sandbox = 'allow-scripts';
+                document.body.appendChild(sandbox);
+                sandbox.contentWindow.eval(content);
+                setTimeout(() => sandbox.remove(), 1000);
             },
             args: [scriptContent],
-            world: 'ISOLATED'
+            world: 'MAIN'
         });
     }
 }
