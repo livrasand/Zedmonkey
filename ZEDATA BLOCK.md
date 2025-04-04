@@ -1,164 +1,145 @@
-# Zedata Block
+# Documentación Zedata Block
 
-## Descripción
-El **Zedata Block** es el bloque de metadatos de scripts para **Zedmonkey**, diseñado para ser ultra minimalista, ligero y de alto rendimiento. Basado en TOML, permite definir y configurar scripts de forma clara, sencilla y rápida. Además, Zedmonkey ofrece soporte dual, procesando tanto el formato tradicional como el Zedata Block, garantizando la compatibilidad con el ecosistema existente.
+## 1. Introducción
+Zedata Block es un formato innovador para describir usuarioscripts, diseñado para reemplazar el Metadata Block tradicional. Zedata permite definir la configuración del script de forma clara en un editor, para luego compilarse en una cadena ultra-compacta que optimiza el tiempo de análisis (parsing) y reduce el consumo de memoria.
 
----
+### Ventajas principales
+- **Reducción de tamaño**: Elimina la redundancia de la sintaxis tradicional y utiliza un formato posicional.
+- **Velocidad de parsing**: La estructura delimitada y sin etiquetas superfluas permite un análisis mucho más rápido.
+- **Compatibilidad**: Se mantiene la capacidad de trabajar con scripts existentes, permitiendo una migración progresiva.
+- **Extensibilidad**: La estructura se puede ampliar en el futuro sin perder la simplicidad básica.
 
-## Sintaxis
+## 2. Sintaxis de Zedata
+Zedata se compone de dos etapas principales: la definición en el editor y la compilación al formato final.
 
-El Zedata Block utiliza la sintaxis de TOML y se estructura en una sección `[script]` que contiene las directivas esenciales para la configuración y ejecución del script. Se coloca al inicio del archivo del script.
-
-**Ejemplo Básico:**
-
-```toml
-[script]
-name = "Hello World Script"
-namespace = "http://zedmonkey.local"
-version = "1.0"
-description = "Muestra una alerta de 'Hello World' al cargar la página"
-author = "Tu Nombre"
-match = "*://*/*"
-grant = "none"
-```
-
----
-
-## Campos del Zedata Block
-
-### name
-**Descripción:**  
-El nombre del script. Es el identificador visible en la interfaz de Zedmonkey y se utiliza para diferenciar y gestionar los scripts.
+### 2.1. Definición en el Editor
+En el editor, los desarrolladores escriben el bloque de configuración en un estilo similar a TOML. Cada línea define un atributo del script mediante una clave y un valor separados por dos puntos y finalizados con una coma. Además, se delimita el bloque con una etiqueta de encabezado.
 
 **Ejemplo:**
-
-```toml
-name = "Hello World Script"
-```
-
----
-
-### namespace
-**Descripción:**  
-Un identificador único que, combinado con el nombre, garantiza la unicidad del script. Suele ser una URL o una cadena que delimite el ámbito del autor.
-
-**Ejemplo:**
-
-```toml
-namespace = "http://zedmonkey.local"
-```
-
----
-
-### version
-**Descripción:**  
-Indica la versión del script en semver, lo cual es esencial para gestionar actualizaciones automáticas y mantener el control de cambios.
-
-**Ejemplo:**
-
-```toml
-version = "1.0.0"
-```
-
----
-
-### description
-**Descripción:**  
-Una breve descripción del script, explicando su funcionalidad principal. Se muestra al usuario durante la instalación y en la interfaz de gestión.
-
-**Ejemplo:**
-
-```toml
-description = "Muestra una alerta de 'Hello World' al cargar la página"
-```
-
----
-
-### author
-**Descripción:**  
-El nombre del autor o del equipo que desarrolló el script.
-
-**Ejemplo:**
-
-```toml
-author = "Tu Nombre"
-```
-
----
-
-### match
-**Descripción:**  
-Define las URL o patrones de URL en las cuales se ejecutará el script. Se utilizan comodines para especificar rangos de coincidencia.
-
-**Ejemplo:**
-
-```toml
-match = "*://*/*"
-```
-
----
-
-### grant
-**Descripción:**  
-Especifica los permisos que requiere el script para su ejecución. Si no se necesitan permisos especiales, se puede establecer en `"none"`.
-
-**Ejemplo:**
-
-```toml
-grant = "none"
-```
-
----
-
-## Ventajas del Zedata Block
-
-- **Minimalismo y Claridad:**  
-  La estructura basada en TOML es intuitiva y facilita la lectura y mantenimiento de los metadatos.
-
-- **Rendimiento:**  
-  La simplicidad del formato permite un procesamiento ultra rápido, en línea con la filosofía de Zedmonkey de mantener scripts ligeros y eficientes.
-
-- **Compatibilidad Dual:**  
-  Zedmonkey puede interpretar tanto el formato tradicional de metadatos como el Zedata Block, asegurando interoperabilidad con scripts existentes.
-
-- **Extensibilidad:**  
-  Aunque el formato es minimalista, se puede ampliar en el futuro para incluir nuevos campos o funcionalidades, manteniendo siempre la coherencia y simplicidad.
-
----
-
-## Ejemplo Completo
-
-**Archivo de Script con Zedata Block:**
-
-```toml
-[script]
-name = "Hello World Script"
-namespace = "http://zedmonkey.local"
-version = "1.0"
-description = "Muestra una alerta de 'Hello World' al cargar la página"
-author = "Tu Nombre"
-match = "*://*/*"
-grant = "none"
-```
-
-**Código JavaScript Asociado:**
-
 ```javascript
-(function() {
-    'use strict';
-    alert('Hello World desde Zedmonkey!');
-})();
+// [script]
+// name:Hello World Script,
+// namespace:zedmonkey,
+// version:1.0.0,
+// description:Hello World!,
+// match:*://*/*,
+// grant:,
 ```
 
----
+**Puntos a destacar:**
+- **Encabezado**: La línea `// [script]` identifica el inicio del bloque.
+- **Separación clave-valor**: Se utiliza el carácter `:` para separar cada clave de su valor.
+- **Delimitación**: La coma final en cada línea indica el término del valor.
+- **Formato de comentarios**: Se usan comentarios de línea (`//`) para mantener la compatibilidad visual y evitar conflictos con el código.
 
-## Consideraciones Finales
+### 2.2. Compilación al Formato Final
+El compilador integrado de Zedmonkey transforma el bloque Zedata en una cadena compacta que incluye la metadata y el código del script en una sola línea. Este formato final se utiliza para cargar el script de forma ultra-rápida.
 
-- **Validación:**  
-  Se recomienda implementar funciones de validación para asegurar que todos los campos requeridos estén presentes y que los valores sean correctos.
+**Ejemplo de salida:**
+```
+script,HelloWorldScript,zedmonkey,1.0.0,HelloWorld,ZedmonkeyUser,*,none((function(){"use strict";window.alert("Hello World!")}))();
+```
 
-- **Compatibilidad:**  
-  Al ofrecer soporte dual, Zedmonkey procesa tanto el bloque tradicional como el Zedata Block, facilitando la transición y adopción por parte de la comunidad.
+**Explicación de la estructura resultante (orden posicional):**
+1. **Tipo de bloque**: Siempre es `script` para identificar que se trata de la metadata de un script.
+2. **Nombre del script**: Versión compacta del valor name (ej. HelloWorldScript sin espacios).
+3. **Namespace**: Valor tomado del campo namespace.
+4. **Versión**: Valor del campo version.
+5. **Descripción**: Valor resumido del campo description (se recomienda un resumen breve).
+6. **Autor**: Se asigna un valor por defecto (ej. ZedmonkeyUser) si no se especifica.
+7. **Patrón de URL**: Valor de match o include, normalizado (por ejemplo, se puede simplificar *://*/* a *).
+8. **Permisos (@grant)**: Si no se especifica, se asigna none.
+9. **Código compilado**: Función autoejecutable (IIFE) que contiene el código JavaScript del script.
 
-- **Documentación y Soporte:**  
-  Mantener una documentación actualizada y ejemplos claros ayudará a los desarrolladores a familiarizarse rápidamente con el Zedata Block y aprovechar al máximo sus ventajas.
+## 3. Esquema de Campos y Claves
+A continuación se detalla la definición de cada campo, sus posibles valores y consideraciones:
+
+### 3.1. Campos obligatorios
+**name:**
+- Descripción: Nombre completo del script, usado para identificarlo en el menú y la base de datos.
+- Ejemplo: `Hello World Script`
+- Consideración: Durante la compilación, se elimina espacios y caracteres especiales para formar el identificador (ej. HelloWorldScript).
+
+**namespace:**
+- Descripción: Identificador único que, en conjunto con el nombre, distingue el script. Suele ser una URL o cadena única.
+- Ejemplo: `zedmonkey`
+
+**version:**
+- Descripción: Versión del script, utilizada en actualizaciones automáticas.
+- Ejemplo: `1.0.0`
+- Formato: Se recomienda usar notación semántica (semver).
+
+**description:**
+- Descripción: Breve resumen de la funcionalidad del script.
+- Ejemplo: `Hello World!`
+- Consideración: Debe ser concisa y clara.
+
+**match / include:**
+- Descripción: Especifica las URL o patrones donde el script se ejecuta.
+- Ejemplo: `*://*/*`
+- Formato: Se pueden admitir múltiples valores usando delimitadores secundarios (por ejemplo, separarlos con punto y coma).
+
+### 3.2. Campos opcionales y extendibles
+**grant:**
+- Descripción: Permisos o funciones especiales requeridas (como acceso a GM_*).
+- Ejemplo: Si no se especifica, se asume `none`.
+
+**author:**
+- Descripción: Nombre del autor del script.
+- Ejemplo: `Zedmonkey User`
+- Valor por defecto: Si no se define, se usa un valor preestablecido.
+
+**icon:**
+- Descripción: URL del icono del script.
+- Ejemplo: `http://www.example.com/icon.png`
+
+**exclude:**
+- Descripción: URLs o patrones donde el script no debe ejecutarse.
+- Formato: Se pueden listar múltiples entradas.
+
+**require / resource:**
+- Descripción: URL de scripts o recursos adicionales que se deben cargar previamente.
+- Formato: Se admite múltiples entradas.
+
+**run-at:**
+- Descripción: Momento en el que el script se inyecta en la página (por ejemplo, document-start, document-end).
+- Ejemplo: `document-end`
+
+**noframes:**
+- Descripción: Indicador para que el script se ejecute sólo en el documento principal y no en iframes.
+- Ejemplo: Se define sin valor.
+
+Otros campos adicionales pueden ser integrados en futuras versiones, siempre respetando la posición o utilizando sub-delimitadores para campos con múltiples valores.
+
+## 4. Ejemplos de Uso
+### 4.1. Ejemplo básico en el editor (Zedata)
+```javascript
+// [script]
+// name:Hello World Script,
+// namespace:zedmonkey,
+// version:1.0.0,
+// description:Hello World!,
+// match:*://*/*,
+// grant:,
+```
+
+### 4.2. Ejemplo compilado final
+```
+script,HelloWorldScript,zedmonkey,1.0.0,HelloWorld,ZedmonkeyUser,*,none((function(){"use strict";window.alert("Hello World!")}))();
+```
+
+### 4.3. Ejemplo con múltiples valores
+Para campos que admiten múltiples valores, se pueden utilizar delimitadores secundarios como punto y coma.
+```javascript
+// [script]
+// name:Multi-Site Script,
+// namespace:zedmonkey,
+// version:1.0.0,
+// description:Works on multiple sites,
+// match:*://example.com/*;*://demo.com/*,
+// grant:GM_setValue;GM_getValue,
+```
+
+```
+script,MultiSiteScript,zedmonkey,1.0.0,WorksOnMultipleSites,ZedmonkeyUser,*://example.com/*;*://demo.com/*,GM_setValue;GM_getValue((function(){"use strict";/* código del script */}))();
+```
