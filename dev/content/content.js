@@ -1,11 +1,68 @@
 // Listen for injection messages from background
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "injectScript" && message.resourcePath) {
-        // Forward to background script for proper handling
-        chrome.runtime.sendMessage(message);
-        return true;
+        const injectPrimary = () => {
+            try {
+                const existingScript = document.querySelector('script[nonce]');
+                const nonce = existingScript?.nonce || '';
+                
+                const script = document.createElement('script');
+                script.src = chrome.runtime.getURL(message.resourcePath);
+                script.setAttribute('nonce', nonce);
+                script.setAttribute('type', 'module');
+                script.crossOrigin = 'anonymous';
+
+                const clone = script.cloneNode(true);
+                (document.head || document.documentElement).appendChild(clone);
+
+                clone.onload = () => {
+                    clone.remove();
+                    sendResponse({ success: true });
+                };
+
+                clone.onerror = () => {
+                    console.warn('Primary script injection failed, trying fallback...');
+                    injectFallback(); // Intenta la alternativa si falla
+                };
+            } catch (error) {
+                console.error('Primary injection exception:', error);
+                injectFallback(); // En caso de excepción
+            }
+        };
+
+        const injectFallback = () => {
+            try {
+                const script = document.createElement('script');
+                script.src = chrome.runtime.getURL(message.resourcePath);
+                script.type = 'text/javascript';
+
+                const existingNonce = document.querySelector('script[nonce]')?.nonce || '';
+                if (existingNonce) script.nonce = existingNonce;
+
+                const clone = script.cloneNode(true);
+                (document.head || document.documentElement).appendChild(clone);
+                clone.remove();
+
+                sendResponse({ success: true });
+            } catch (fallbackError) {
+                console.error('Fallback injection also failed:', fallbackError);
+                sendResponse({ success: false });
+            }
+        };
+
+        // Asegurar contexto adecuado
+        if (document.contentType === 'text/html') {
+            injectPrimary();
+        } else {
+            const blob = new Blob([`(${injectPrimary.toString()})()`], {type: 'text/javascript'});
+            const url = URL.createObjectURL(blob);
+            import(url).finally(() => URL.revokeObjectURL(url));
+        }
+
+        return true; // Mantener canal abierto
     }
 });
+
 
 function detectUserscripts() {
   var e;

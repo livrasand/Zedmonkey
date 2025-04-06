@@ -5,6 +5,7 @@ async function getScripts() {
         })
     })
 }
+
 async function saveScript(o) {
     return new Promise((r, c) => {
         getScripts().then(e => {
@@ -132,9 +133,9 @@ async function injectScript(tabId, script) {
     const scriptContent = result[resourcePath];
 
     try {
-        // Use sandboxed execution with iife
+        // Primer intento: IIFE en script tipo módulo
         await chrome.scripting.executeScript({
-            target: {tabId: tabId, allFrames: true},
+            target: { tabId: tabId, allFrames: true },
             func: (content) => {
                 const script = document.createElement('script');
                 script.textContent = `(function(){${content}})();`;
@@ -149,22 +150,70 @@ async function injectScript(tabId, script) {
         });
     } catch (error) {
         console.error('Main world injection failed:', error);
-        // Fallback to iframe sandbox
-        await chrome.scripting.executeScript({
-            target: {tabId: tabId},
-            func: (content) => {
-                const sandbox = document.createElement('iframe');
-                sandbox.style.display = 'none';
-                sandbox.sandbox = 'allow-scripts';
-                document.body.appendChild(sandbox);
-                sandbox.contentWindow.eval(content);
-                setTimeout(() => sandbox.remove(), 1000);
-            },
-            args: [scriptContent],
-            world: 'MAIN'
-        });
+        try {
+            // Segundo intento: sandbox en iframe
+            await chrome.scripting.executeScript({
+                target: { tabId: tabId },
+                func: (content) => {
+                    const sandbox = document.createElement('iframe');
+                    sandbox.style.display = 'none';
+                    sandbox.sandbox = 'allow-scripts';
+                    document.body.appendChild(sandbox);
+                    sandbox.contentWindow.eval(content);
+                    setTimeout(() => sandbox.remove(), 1000);
+                },
+                args: [scriptContent],
+                world: 'MAIN'
+            });
+        } catch (iframeError) {
+            console.log('Iframe sandbox injection failed, trying content script message...');
+            try {
+                // Tercer intento: comunicación con content script
+                const response = await chrome.tabs.sendMessage(tabId, {
+                    action: "injectScript",
+                    resourcePath: resourcePath
+                });
+
+                if (!response?.success) {
+                    throw new Error('Content script injection failed');
+                }
+            } catch (messageError) {
+                console.log('Content script fallback failed, trying nonce + src...');
+                try {
+                    // Cuarto intento: uso de script.src y nonce
+                    await chrome.scripting.executeScript({
+                        target: { tabId: tabId, allFrames: true },
+                        func: (resourcePath) => {
+                            const existingScript = document.querySelector('script[nonce]');
+                            const nonce = existingScript?.nonce || '';
+                            const script = document.createElement('script');
+                            script.src = chrome.runtime.getURL(resourcePath);
+                            script.setAttribute('nonce', nonce);
+                            script.crossOrigin = 'anonymous';
+                            (document.head || document.documentElement).appendChild(script);
+                            script.onload = () => script.remove();
+                        },
+                        args: [resourcePath],
+                        world: 'MAIN'
+                    });
+                } catch (finalNonceError) {
+                    console.log('Final fallback failed, trying direct file injection...');
+                    try {
+                        // Quinto y último intento: usar directamente la propiedad "files"
+                        await chrome.scripting.executeScript({
+                            target: { tabId, allFrames: true },
+                            files: [resourcePath],
+                            world: 'MAIN'
+                        });
+                    } catch (fileInjectionError) {
+                        console.error('All injection methods failed:', fileInjectionError);
+                    }
+                }
+            }
+        }
     }
 }
+
 
 chrome.tabs.onActivated.addListener(e => {
     updateScriptCountBadge(e.tabId)
@@ -493,4 +542,12 @@ chrome.tabs.onActivated.addListener(e => {
             })
         })
     }) : "extension-options" === e.menuItemId && chrome.runtime.openOptionsPage()
+});
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === 'proxyRequest') {
+        const xhr = new XMLHttpRequest();
+        // Implement CORS bypass and header handling
+        xhr.open(request.method, request.url, true);
+        // Add custom headers and response handling
+    }
 });
