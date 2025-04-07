@@ -1,0 +1,61 @@
+{
+    "manifest_version": 3,
+    "name": "Zedmonkey",
+    "version": "1.2.0",
+    "description": "Ultra-fast userscripts. Zero bloat. Zero background impact. Total dominance.",
+    "icons": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "action": {
+      "default_popup": "popup/popup.html",
+      "default_icon": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+      }
+    },
+    "permissions": [
+      "storage",
+      "scripting",
+      "contextMenus",
+      "activeTab",
+      "declarativeNetRequest"
+    ],
+    "host_permissions": [
+      "<all_urls>"
+    ],
+    "background": {
+      "service_worker": "background.js"
+    },
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["content/content.js"],
+        "run_at": "document_start",
+        "all_frames": true
+      }
+    ],
+    "options_ui": {
+      "page": "options/options.html",
+      "open_in_tab": true
+    },
+    "content_security_policy": {
+      "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+    },
+    "web_accessible_resources": [{
+        "resources": [
+            "scripts/*.js",
+            "content/content.js"
+        ],
+        "matches": ["<all_urls>"]
+    }],
+    "declarative_net_request": {
+        "rule_resources": [{
+            "id": "zedmonkey_rules",
+            "enabled": true,
+            "path": "rules.json"
+        }]
+    }
+  }
