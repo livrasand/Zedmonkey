@@ -1,5 +1,8 @@
 // Listen for injection messages from background
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    chrome.storage.local.get('injectionEnabled', result => {
+    if (result.injectionEnabled === false) return;
+
     if (message.action === "injectScript" && message.resourcePath) {
         const injectPrimary = () => {
             try {
@@ -61,6 +64,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
         return true; // Mantener canal abierto
     }
+    
 });
 
 
@@ -421,4 +425,5 @@ function startObserver() {
       })
   })
 }
-startObserver(), document.addEventListener("DOMContentLoaded", addUserscriptLinkHandlers);
+startObserver();
+document.addEventListener("DOMContentLoaded", addUserscriptLinkHandlers)});

@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Zedmonkey",
     "version": "1.2.0",
-    "description": "A open-source userscript manager engineered for developers who demand speed and efficiency.",
+    "description": "Ultra-fast userscripts. Zero bloat. Zero background impact. Total dominance.",
     "icons": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",

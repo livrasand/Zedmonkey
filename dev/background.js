@@ -128,6 +128,17 @@ async function storeScriptAsResource(script) {
 }
 
 async function injectScript(tabId, script) {
+    // Añadir esta verificación al inicio
+    const injectionEnabled = await new Promise(resolve => {
+        chrome.storage.local.get('injectionEnabled', result => {
+            resolve(result.injectionEnabled !== false);
+        });
+    });
+    if (!injectionEnabled) return;
+
+    // Verificación existente del script individual
+    if (!script.enabled) return;
+    
     const resourcePath = await storeScriptAsResource(script);
     const result = await chrome.storage.local.get(resourcePath);
     const scriptContent = result[resourcePath];
