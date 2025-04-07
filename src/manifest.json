@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
     "name": "Zedmonkey",
-    "version": "1.1.0",
-    "description": "A open-source userscript manager engineered for developers who demand speed and efficiency.",
+    "version": "1.2.0",
+    "description": "Ultra-fast userscripts. Zero bloat. Zero background impact. Total dominance.",
     "icons": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",
@@ -20,7 +20,8 @@
       "storage",
       "scripting",
       "contextMenus",
-      "activeTab"
+      "activeTab",
+      "declarativeNetRequest"
     ],
     "host_permissions": [
       "<all_urls>"
@@ -43,10 +44,18 @@
     "content_security_policy": {
       "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
     },
-    "web_accessible_resources": [
-        {
-            "resources": ["scripts/*.js"], 
-            "matches": ["<all_urls>"]
-        }
-    ]
+    "web_accessible_resources": [{
+        "resources": [
+            "scripts/*.js",
+            "content/content.js"
+        ],
+        "matches": ["<all_urls>"]
+    }],
+    "declarative_net_request": {
+        "rule_resources": [{
+            "id": "zedmonkey_rules",
+            "enabled": true,
+            "path": "rules.json"
+        }]
+    }
   }
