@@ -1,17 +1,15 @@
 # Zedmonkey <span style="background-color: #3D5AFE; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7em; vertical-align: middle;">βeta</span>
 
 <p align="center">
-  <img src="src/icons/icon128.png" alt="Zedmonkey Logo" width="128" height="128">
+  <img src="src-chrome/icons/icon128.png" alt="Zedmonkey Logo" width="128" height="128">
 </p>
 
 <p align="center">
   <b>A lightning-fast userscript manager engineered for developers who demand speed and efficiency</b>
 </p>
+  
+  [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/ahppjceidfcinboledomgmbmnafdidll.svg)](https://chromewebstore.google.com/detail/ahppjceidfcinboledomgmbmnafdidll) [![Microsoft Edge Add-on](https://img.shields.io/badge/dynamic/json?label=microsoft%20edge%20add-on&query=%24.version&url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Fgjdgchmdmajdbcbfijhmlghkfjpfbpkg)](https://microsoftedge.microsoft.com/addons/detail/gjdgchmdmajdbcbfijhmlghkfjpfbpkg)
 
-<p align="center">
-  <a href="https://chromewebstore.google.com/detail/ahppjceidfcinboledomgmbmnafdidll"><img src="https://img.shields.io/badge/Download-Chrome_Web_Store-4285F4?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Download from Chrome Web Store"></a>
-  <a href="https://github.com/livrasand/Zedmonkey"><img src="https://img.shields.io/badge/View_Source-GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="View Source on GitHub"></a>
-</p>
 
 ## Performance That Speaks For Itself
 
