@@ -305,70 +305,82 @@ body {
     font-size: 11px
 }
 
-.token.comment {
-    color: #6a9955
+/* Colores estilo VS Code Dark+ */
+.token.comment { 
+    color: #6A9955;
+    font-style: italic;
 }
 
-.token.string {
-    color: #ce9178
+.token.meta {
+    color: #9CDCFE;
+    font-style: italic;
 }
 
-.token.number {
-    color: #b5cea8
+.token.meta-section {
+    color: #569CD6;
+    font-weight: bold;
 }
 
 .token.keyword {
-    color: #569cd6
-}
-
-.token.operator {
-    color: #d4d4d4
+    color: #569CD6;
+    font-weight: bold;
 }
 
 .token.function {
-    color: #dcdcaa
+    color: #DCDCAA;
 }
 
-.token.class-name {
-    color: #4ec9b0
+.token.string {
+    color: #CE9178;
+}
+
+.token.number {
+    color: #B5CEA8;
+}
+
+.token.operator {
+    color: #D4D4D4;
+}
+
+.token.punctuation {
+    color: #D4D4D4;
+}
+
+.token.parameter {
+    color: #9CDCFE;
+}
+
+.token.object {
+    color: #4EC9B0;
 }
 
 .token.property {
-    color: #9cdcfe
-}
-
-.token.regex {
-    color: #d16969
-}
-
-.token.boolean {
-    color: #569cd6
+    color: #9CDCFE;
 }
 
 .token.constant {
-    color: #4fc1ff
+    color: #4FC1FF;
+    text-transform: uppercase;
 }
 
-.token.bracket,
-.token.punctuation {
-    color: #d4d4d4
+.token.boolean {
+    color: #569CD6;
 }
 
-.token.script-tag {
-    color: #569cd6
+.token.regex {
+    color: #D16969;
 }
 
-.token.zedata-key {
-    color: #9cdcfe
+/* Resaltado de coincidencias */
+.bracket-match {
+    background-color: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.7);
 }
 
-.token.zedata-value {
-    color: #ce9178
-}
-
-.token.zedata-section {
-    color: #569cd6;
-    font-weight: 700
+/* Mejorar visibilidad de la línea actual */
+.current-line {
+    background: rgba(255, 255, 255, 0.07);
+    border-left: 3px solid #569CD6;
 }
 
 @media (max-width:768px) {
