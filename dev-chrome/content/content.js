@@ -1,304 +1,349 @@
 // Listen for injection messages from background
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    chrome.storage.local.get('injectionEnabled', result => {
-    if (result.injectionEnabled === false) return;
-
+    // Handle script injection
     if (message.action === "injectScript" && message.resourcePath) {
-        const injectPrimary = () => {
-            try {
-                const existingScript = document.querySelector('script[nonce]');
-                const nonce = existingScript?.nonce || '';
-                
-                const script = document.createElement('script');
-                script.src = chrome.runtime.getURL(message.resourcePath);
-                script.setAttribute('nonce', nonce);
-                script.setAttribute('type', 'module');
-                script.crossOrigin = 'anonymous';
+        chrome.storage.local.get('injectionEnabled', result => {
+            if (result.injectionEnabled === false) return;
+            
+            const injectPrimary = () => {
+                try {
+                    const existingScript = document.querySelector('script[nonce]');
+                    const nonce = existingScript?.nonce || '';
+                    
+                    const script = document.createElement('script');
+                    script.src = chrome.runtime.getURL(message.resourcePath);
+                    script.setAttribute('nonce', nonce);
+                    script.setAttribute('type', 'module');
+                    script.crossOrigin = 'anonymous';
 
-                const clone = script.cloneNode(true);
-                (document.head || document.documentElement).appendChild(clone);
+                    const clone = script.cloneNode(true);
+                    (document.head || document.documentElement).appendChild(clone);
 
-                clone.onload = () => {
+                    clone.onload = () => {
+                        clone.remove();
+                        sendResponse({ success: true });
+                    };
+
+                    clone.onerror = () => {
+                        console.warn('Primary script injection failed, trying fallback...');
+                        injectFallback(); // Intenta la alternativa si falla
+                    };
+                } catch (error) {
+                    console.error('Primary injection exception:', error);
+                    injectFallback(); // En caso de excepción
+                }
+            };
+
+            const injectFallback = () => {
+                try {
+                    const script = document.createElement('script');
+                    script.src = chrome.runtime.getURL(message.resourcePath);
+                    script.type = 'text/javascript';
+
+                    const existingNonce = document.querySelector('script[nonce]')?.nonce || '';
+                    if (existingNonce) script.nonce = existingNonce;
+
+                    const clone = script.cloneNode(true);
+                    (document.head || document.documentElement).appendChild(clone);
                     clone.remove();
+
                     sendResponse({ success: true });
-                };
+                } catch (fallbackError) {
+                    console.error('Fallback injection also failed:', fallbackError);
+                    sendResponse({ success: false });
+                }
+            };
 
-                clone.onerror = () => {
-                    console.warn('Primary script injection failed, trying fallback...');
-                    injectFallback(); // Intenta la alternativa si falla
-                };
-            } catch (error) {
-                console.error('Primary injection exception:', error);
-                injectFallback(); // En caso de excepción
+            // Asegurar contexto adecuado
+            if (document.contentType === 'text/html') {
+                injectPrimary();
+            } else {
+                const blob = new Blob([`(${injectPrimary.toString()})()`], {type: 'text/javascript'});
+                const url = URL.createObjectURL(blob);
+                import(url).finally(() => URL.revokeObjectURL(url));
             }
-        };
-
-        const injectFallback = () => {
-            try {
-                const script = document.createElement('script');
-                script.src = chrome.runtime.getURL(message.resourcePath);
-                script.type = 'text/javascript';
-
-                const existingNonce = document.querySelector('script[nonce]')?.nonce || '';
-                if (existingNonce) script.nonce = existingNonce;
-
-                const clone = script.cloneNode(true);
-                (document.head || document.documentElement).appendChild(clone);
-                clone.remove();
-
-                sendResponse({ success: true });
-            } catch (fallbackError) {
-                console.error('Fallback injection also failed:', fallbackError);
-                sendResponse({ success: false });
-            }
-        };
-
-        // Asegurar contexto adecuado
-        if (document.contentType === 'text/html') {
-            injectPrimary();
-        } else {
-            const blob = new Blob([`(${injectPrimary.toString()})()`], {type: 'text/javascript'});
-            const url = URL.createObjectURL(blob);
-            import(url).finally(() => URL.revokeObjectURL(url));
-        }
-
+        });
+        
         return true; // Mantener canal abierto
     }
     
+    // Handle userscript detection
+    if (message.action === "detectUserscript") {
+        let result = detectUserscripts();
+        sendResponse(result);
+        
+        if (result.detected && result.scriptContent) {
+            chrome.storage.sync.get("autoShowInstallUI", e => {
+                if (e.autoShowInstallUI !== false) {
+                    createInstallUI(result);
+                }
+            });
+        }
+        return true;
+    }
+    
+    // Handle script installation
+    if (message.action === "installScript") {
+        if (message.scriptContent) {
+            createInstallUI({
+                scriptContent: message.scriptContent
+            });
+        } else if (message.scriptUrl) {
+            fetchScript(message.scriptUrl).then(content => {
+                if (content && content.error) {
+                    if (!content.contextInvalidated) {
+                        showNotification("Error fetching script: " + content.message, true);
+                    }
+                } else if (content) {
+                    createInstallUI({
+                        scriptContent: content
+                    });
+                } else {
+                    showNotification("Failed to fetch script content", true);
+                }
+            });
+        }
+        return true;
+    }
+    
+    // Handle scripts for current page
+    if (message.action === "getScriptsForCurrentPage") {
+        // This is handled by the initial injection code
+        return false;
+    }
 });
 
-
 function detectUserscripts() {
-  var e;
-  for (e of document.querySelectorAll("script")) {
-      var t = e.textContent || "";
-      if (t.includes("// ==UserScript==") && t.includes("// ==/UserScript==")) return {
-          detected: !0,
-          scriptContent: t
-      }
-  }
-  var o = document.querySelectorAll('a[href$=".user.js"]');
-  return 0 < o.length ? {
-      detected: !0,
-      scriptLinks: Array.from(o).map(e => ({
-          url: e.href,
-          text: e.textContent || e.href
-      }))
-  } : {
-      detected: !1
-  }
+    var e;
+    for (e of document.querySelectorAll("script")) {
+        var t = e.textContent || "";
+        if (t.includes("// ==UserScript==") && t.includes("// ==/UserScript==")) return {
+            detected: !0,
+            scriptContent: t
+        }
+    }
+    var o = document.querySelectorAll('a[href$=".user.js"]');
+    return 0 < o.length ? {
+        detected: !0,
+        scriptLinks: Array.from(o).map(e => ({
+            url: e.href,
+            text: e.textContent || e.href
+        }))
+    } : {
+        detected: !1
+    }
 }
 
 function createInstallUI(o) {
-  var e = document.getElementById("zedmonkey-install-ui");
-  e && e.remove();
-  let t = document.createElement("div"),
-      r = (t.id = "zedmonkey-install-ui", t.style.cssText = `
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: #2c3e50;
-  color: white;
-  z-index: 2147483647;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  padding: 15px 20px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 3px 15px rgba(0,0,0,0.4);
-  border-bottom: 2px solid #3498db;
-  max-height: 80vh;
-  overflow-y: auto;
+    var e = document.getElementById("zedmonkey-install-ui");
+    e && e.remove();
+    let t = document.createElement("div"),
+        r = (t.id = "zedmonkey-install-ui", t.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #2c3e50;
+    color: white;
+    z-index: 2147483647;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    padding: 15px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.4);
+    border-bottom: 2px solid #3498db;
+    max-height: 80vh;
+    overflow-y: auto;
 `, "Userscript"),
-      n = "1.0",
-      s = "",
-      i = "";
-  o.scriptContent && ((e = o.scriptContent.match(/@name\s+(.+?)(\n|$)/)) && (r = e[1].trim()), (e = o.scriptContent.match(/@version\s+(.+?)(\n|$)/)) && (n = e[1].trim()), (e = o.scriptContent.match(/@author\s+(.+?)(\n|$)/)) && (s = e[1].trim()), e = o.scriptContent.match(/@description\s+(.+?)(\n|$)/)) && (i = e[1].trim());
-  document.createElement("div").style.cssText = `
-  display: flex;
-  align-items: center;
-  flex: 1;
-  min-width: 300px;
-  margin-bottom: 10px;
+        n = "1.0",
+        s = "",
+        i = "";
+    o.scriptContent && ((e = o.scriptContent.match(/@name\s+(.+?)(\n|$)/)) && (r = e[1].trim()), (e = o.scriptContent.match(/@version\s+(.+?)(\n|$)/)) && (n = e[1].trim()), (e = o.scriptContent.match(/@author\s+(.+?)(\n|$)/)) && (s = e[1].trim()), e = o.scriptContent.match(/@description\s+(.+?)(\n|$)/)) && (i = e[1].trim());
+    document.createElement("div").style.cssText = `
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 300px;
+    margin-bottom: 10px;
 `;
-  var e = document.createElement("div"),
-      a = (e.style.cssText = `
-  display: flex;
-  align-items: center;
-  margin-right: 15px;
-  flex-shrink: 0;
+    var e = document.createElement("div"),
+        a = (e.style.cssText = `
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+    flex-shrink: 0;
 `, document.createElement("div")),
-      a = (a.style.cssText = `
-  width: 40px;
-  height: 40px;
-  background-image: url(${chrome.runtime.getURL("../icons/icon48.png")});
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        a = (a.style.cssText = `
+    width: 40px;
+    height: 40px;
+    background-image: url(${chrome.runtime.getURL("../icons/icon48.png")});
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 `, e.appendChild(a), document.createElement("div")),
-      c = (a.style.cssText = `
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
+        c = (a.style.cssText = `
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
 `, document.createElement("div")),
-      d = (c.textContent = "Zedmonkey - Instalación de Script", c.style.cssText = `
-  font-weight: bold;
-  font-size: 16px;
-  margin-bottom: 6px;
-  color: #3498db;
+        d = (c.textContent = "Zedmonkey - Instalación de Script", c.style.cssText = `
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 6px;
+    color: #3498db;
 `, document.createElement("div")),
-      l = (d.textContent = `${r} (v${n})`, d.style.cssText = `
-  font-size: 14px;
-  font-weight: 500;
+        l = (d.textContent = `${r} (v${n})`, d.style.cssText = `
+    font-size: 14px;
+    font-weight: 500;
 `, document.createElement("div")),
-      p = (l.textContent = s ? "por " + s : "", l.style.cssText = `
-  font-size: 12px;
-  opacity: 0.8;
-  margin-top: 2px;
-`, document.createElement("div")),
-      c = (i && (p.textContent = i, p.style.cssText = `
+        p = (l.textContent = s ? "por " + s : "", l.style.cssText = `
     font-size: 12px;
-    margin-top: 5px;
-    max-width: 500px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    opacity: 0.9;
-  `, p.title = i), a.appendChild(c), a.appendChild(d), s && a.appendChild(l), i && a.appendChild(p), document.createElement("div"));
-  c.style.cssText = `
-  display: flex;
-  gap: 12px;
-  align-items: center;
+    opacity: 0.8;
+    margin-top: 2px;
+`, document.createElement("div")),
+        c = (i && (p.textContent = i, p.style.cssText = `
+        font-size: 12px;
+        margin-top: 5px;
+        max-width: 500px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        opacity: 0.9;
+      `, p.title = i), a.appendChild(c), a.appendChild(d), s && a.appendChild(l), i && a.appendChild(p), document.createElement("div"));
+    c.style.cssText = `
+    display: flex;
+    gap: 12px;
+    align-items: center;
 `;
-  let u = document.createElement("button"),
-      m = (u.textContent = "Instalar", u.style.cssText = `
-  background: #4CAF50;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.2s;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    let u = document.createElement("button"),
+        m = (u.textContent = "Instalar", u.style.cssText = `
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 `, u.onmouseover = () => {
-          u.style.background = "#45a049"
-      }, u.onmouseout = () => {
-          u.style.background = "#4CAF50"
-      }, document.createElement("button")),
-      x = (m.textContent = "Descargar", m.style.cssText = `
-  background: #3498db;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.2s;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            u.style.background = "#45a049"
+        }, u.onmouseout = () => {
+            u.style.background = "#4CAF50"
+        }, document.createElement("button")),
+        x = (m.textContent = "Descargar", m.style.cssText = `
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 `, m.onmouseover = () => {
-          m.style.background = "#2980b9"
-      }, m.onmouseout = () => {
-          m.style.background = "#3498db"
-      }, document.createElement("button")),
-      h = (x.textContent = "Instalar y Descargar", x.style.cssText = `
-  background: #9b59b6;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.2s;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            m.style.background = "#2980b9"
+        }, m.onmouseout = () => {
+            m.style.background = "#3498db"
+        }, document.createElement("button")),
+        h = (x.textContent = "Instalar y Descargar", x.style.cssText = `
+    background: #9b59b6;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 `, x.onmouseover = () => {
-          x.style.background = "#8e44ad"
-      }, x.onmouseout = () => {
-          x.style.background = "#9b59b6"
-      }, document.createElement("button")),
-      g = (h.textContent = "Editar", h.style.cssText = `
-  background: #f39c12;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.2s;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            x.style.background = "#8e44ad"
+        }, x.onmouseout = () => {
+            x.style.background = "#9b59b6"
+        }, document.createElement("button")),
+        g = (h.textContent = "Editar", h.style.cssText = `
+    background: #f39c12;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 `, h.onmouseover = () => {
-          h.style.background = "#e67e22"
-      }, h.onmouseout = () => {
-          h.style.background = "#f39c12"
-      }, document.createElement("button"));
+            h.style.background = "#e67e22"
+        }, h.onmouseout = () => {
+            h.style.background = "#f39c12"
+        }, document.createElement("button"));
 
-  function b() {
-      var e = new Blob([o.scriptContent], {
-              type: "text/javascript"
-          }),
-          e = URL.createObjectURL(e),
-          t = document.createElement("a");
-      t.href = e, t.download = r.replace(/[^a-z0-9]/gi, "_").toLowerCase() + ".user.js", document.body.appendChild(t), t.click(), document.body.removeChild(t), URL.revokeObjectURL(e)
-  }
-  g.textContent = "Cancelar", g.style.cssText = `
-  background: #95a5a6;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.2s;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    function b() {
+        var e = new Blob([o.scriptContent], {
+                type: "text/javascript"
+            }),
+            e = URL.createObjectURL(e),
+            t = document.createElement("a");
+        t.href = e, t.download = r.replace(/[^a-z0-9]/gi, "_").toLowerCase() + ".user.js", document.body.appendChild(t), t.click(), document.body.removeChild(t), URL.revokeObjectURL(e)
+    }
+    g.textContent = "Cancelar", g.style.cssText = `
+    background: #95a5a6;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 `, g.onmouseover = () => {
-      g.style.background = "#7f8c8d"
-  }, g.onmouseout = () => {
-      g.style.background = "#95a5a6"
-  }, u.addEventListener("click", () => {
-      chrome.runtime.sendMessage({
-          action: "addScript",
-          scriptContent: o.scriptContent
-      }, e => {
-          e && e.success ? showNotification("Script instalado correctamente!") : showNotification("Error al instalar el script: " + (e?.error || "Error desconocido"), !0), t.remove()
-      })
-  }), m.addEventListener("click", () => {
-      b(), showNotification("Script descargado correctamente!"), t.remove()
-  }), x.addEventListener("click", () => {
-      chrome.runtime.sendMessage({
-          action: "addScript",
-          scriptContent: o.scriptContent
-      }, e => {
-          e && e.success ? (b(), showNotification("Script instalado y descargado correctamente!")) : (showNotification("Error al instalar el script: " + (e?.error || "Error desconocido"), !0), b()), t.remove()
-      })
-  }), h.addEventListener("click", () => {
-      chrome.runtime.sendMessage({
-          action: "openScriptInEditor",
-          scriptContent: o.scriptContent
-      }), t.remove()
-  }), g.addEventListener("click", () => {
-      t.remove()
-  }), c.appendChild(u), c.appendChild(m), c.appendChild(x), c.appendChild(h), c.appendChild(g), t.appendChild(e), t.appendChild(a), t.appendChild(c), document.body.appendChild(t);
-  let f = document.createElement("div");
-  f.innerHTML = "&times;", f.style.cssText = `
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 20px;
-  cursor: pointer;
-  color: #95a5a6;
-  transition: color 0.2s;
+        g.style.background = "#7f8c8d"
+    }, g.onmouseout = () => {
+        g.style.background = "#95a5a6"
+    }, u.addEventListener("click", () => {
+        chrome.runtime.sendMessage({
+            action: "addScript",
+            scriptContent: o.scriptContent
+        }, e => {
+            e && e.success ? showNotification("Script instalado correctamente!") : showNotification("Error al instalar el script: " + (e?.error || "Error desconocido"), !0), t.remove()
+        })
+    }), m.addEventListener("click", () => {
+        b(), showNotification("Script descargado correctamente!"), t.remove()
+    }), x.addEventListener("click", () => {
+        chrome.runtime.sendMessage({
+            action: "addScript",
+            scriptContent: o.scriptContent
+        }, e => {
+            e && e.success ? (b(), showNotification("Script instalado y descargado correctamente!")) : (showNotification("Error al instalar el script: " + (e?.error || "Error desconocido"), !0), b()), t.remove()
+        })
+    }), h.addEventListener("click", () => {
+        chrome.runtime.sendMessage({
+            action: "openScriptInEditor",
+            scriptContent: o.scriptContent
+        }), t.remove()
+    }), g.addEventListener("click", () => {
+        t.remove()
+    }), c.appendChild(u), c.appendChild(m), c.appendChild(x), c.appendChild(h), c.appendChild(g), t.appendChild(e), t.appendChild(a), t.appendChild(c), document.body.appendChild(t);
+    let f = document.createElement("div");
+    f.innerHTML = "&times;", f.style.cssText = `
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #95a5a6;
+    transition: color 0.2s;
 `, f.onmouseover = () => {
-      f.style.color = "#ffffff"
-  }, f.onmouseout = () => {
-      f.style.color = "#95a5a6"
-  }, f.onclick = () => {
-      t.remove()
-  }, t.appendChild(f)
+        f.style.color = "#ffffff"
+    }, f.onmouseout = () => {
+        f.style.color = "#95a5a6"
+    }, f.onclick = () => {
+        t.remove()
+    }, t.appendChild(f)
 }
 async function fetchScript(r) {
   try {
@@ -378,40 +423,41 @@ chrome.storage.sync.get({ injectionEnabled: true }, ({ injectionEnabled }) => {
     }
 });
 
-chrome.runtime.onMessage.addListener((e, t, o) => {
-  if ("detectUserscript" === e.action) {
-      let t = detectUserscripts();
-      o(t), t.detected && t.scriptContent && chrome.storage.sync.get("autoShowInstallUI", e => {
-          !1 !== e.autoShowInstallUI && createInstallUI(t)
-      })
-  }
-  "installScript" === e.action && (e.scriptContent ? createInstallUI({
-      scriptContent: e.scriptContent
-  }) : e.scriptUrl && fetchScript(e.scriptUrl).then(e => {
-      e && e.error ? e.contextInvalidated || showNotification("Error fetching script: " + e.message, !0) : e ? createInstallUI({
-          scriptContent: e
-      }) : showNotification("Failed to fetch script content", !0)
-  }))
-}), window.addEventListener("load", () => {
-  chrome.storage.sync.get("autoDetectScripts", e => {
-      if (!1 !== e.autoDetectScripts) {
-          let t = detectUserscripts();
-          t.detected && (chrome.runtime.sendMessage({
-              action: "scriptDetected",
-              scriptData: t
-          }), chrome.storage.sync.get("autoShowInstallUI", e => {
-              !1 !== e.autoShowInstallUI && t.scriptContent && createInstallUI(t)
-          }), t.scriptLinks) && 0 < t.scriptLinks.length && addUserscriptLinkHandlers()
-      }
-  })
+// Auto-detect scripts on page load
+window.addEventListener("load", () => {
+    chrome.storage.sync.get("autoDetectScripts", e => {
+        if (e.autoDetectScripts !== false) {
+            let t = detectUserscripts();
+            if (t.detected) {
+                chrome.runtime.sendMessage({
+                    action: "scriptDetected",
+                    scriptData: t
+                });
+                
+                chrome.storage.sync.get("autoShowInstallUI", e => {
+                    if (e.autoShowInstallUI !== false && t.scriptContent) {
+                        createInstallUI(t);
+                    }
+                });
+                
+                if (t.scriptLinks && t.scriptLinks.length > 0) {
+                    addUserscriptLinkHandlers();
+                }
+            }
+        }
+    });
 });
+
+// Set up mutation observer to detect new userscript links
 let observer = new MutationObserver(e => {
   let t = !1;
-  for (var o of e)
-      if ("childList" === o.type && 0 < o.addedNodes.length) {
+  for (var o of e) {
+      if ("childList" === o.type && o.addedNodes.length > 0) {
           t = !0;
-          break
-      } t && addUserscriptLinkHandlers()
+          break;
+      }
+  }
+  if (t) addUserscriptLinkHandlers();
 });
 
 function startObserver() {
@@ -422,8 +468,10 @@ function startObserver() {
       observer.observe(document.body, {
           childList: !0,
           subtree: !0
-      })
-  })
+      });
+      addUserscriptLinkHandlers(); // Initial scan for userscript links
+  });
 }
+
 startObserver();
-document.addEventListener("DOMContentLoaded", addUserscriptLinkHandlers)});
+// Removed the duplicate DOMContentLoaded listener that was at the end of the file
