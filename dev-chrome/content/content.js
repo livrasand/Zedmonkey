@@ -149,9 +149,7 @@ function createInstallUI(o) {
     font-family: 'Segoe UI', Arial, sans-serif;
     padding: 15px 20px;
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
     box-shadow: 0 3px 15px rgba(0,0,0,0.4);
     border-bottom: 2px solid #3498db;
     max-height: 80vh;
@@ -161,127 +159,324 @@ function createInstallUI(o) {
         s = "",
         i = "";
     o.scriptContent && ((e = o.scriptContent.match(/@name\s+(.+?)(\n|$)/)) && (r = e[1].trim()), (e = o.scriptContent.match(/@version\s+(.+?)(\n|$)/)) && (n = e[1].trim()), (e = o.scriptContent.match(/@author\s+(.+?)(\n|$)/)) && (s = e[1].trim()), e = o.scriptContent.match(/@description\s+(.+?)(\n|$)/)) && (i = e[1].trim());
-    document.createElement("div").style.cssText = `
-    display: flex;
-    align-items: center;
-    flex: 1;
-    min-width: 300px;
-    margin-bottom: 10px;
-`;
-    var e = document.createElement("div"),
-        a = (e.style.cssText = `
-    display: flex;
-    align-items: center;
-    margin-right: 15px;
-    flex-shrink: 0;
-`, document.createElement("div")),
-        a = (a.style.cssText = `
-    width: 40px;
-    height: 40px;
-    background-image: url(${chrome.runtime.getURL("../icons/icon48.png")});
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-`, e.appendChild(a), document.createElement("div")),
-        c = (a.style.cssText = `
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-`, document.createElement("div")),
-        d = (c.textContent = "Zedmonkey - Instalación de Script", c.style.cssText = `
-    font-weight: bold;
-    font-size: 16px;
-    margin-bottom: 6px;
-    color: #3498db;
-`, document.createElement("div")),
-        l = (d.textContent = `${r} (v${n})`, d.style.cssText = `
-    font-size: 14px;
-    font-weight: 500;
-`, document.createElement("div")),
-        p = (l.textContent = s ? "por " + s : "", l.style.cssText = `
-    font-size: 12px;
-    opacity: 0.8;
-    margin-top: 2px;
-`, document.createElement("div")),
-        c = (i && (p.textContent = i, p.style.cssText = `
+    
+    // Header section with icon and title
+    let headerSection = document.createElement("div");
+    headerSection.style.cssText = `
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    `;
+    
+    // Icon container
+    let iconContainer = document.createElement("div");
+    iconContainer.style.cssText = `
+        width: 40px;
+        height: 40px;
+        margin-right: 15px;
+        flex-shrink: 0;
+    `;
+    
+    // Icon
+    let icon = document.createElement("div");
+    icon.style.cssText = `
+        width: 40px;
+        height: 40px;
+        background-image: url(${chrome.runtime.getURL("icons/icon48.png")});
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        border-radius: 8px;
+        background-color: #3498db;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 20px;
+        color: white;
+    `;
+    
+    // Add a fallback text in case the image doesn't load
+    icon.textContent = "Z";
+    
+    // Try to load the icon with different paths
+    const tryLoadIcon = (paths) => {
+        if (paths.length === 0) return;
+        
+        const path = paths[0];
+        const img = new Image();
+        img.onload = () => {
+            icon.style.backgroundImage = `url(${chrome.runtime.getURL(path)})`;
+            icon.textContent = ""; // Clear the fallback text
+        };
+        img.onerror = () => {
+            console.log(`Failed to load icon from: ${path}`);
+            tryLoadIcon(paths.slice(1));
+        };
+        img.src = chrome.runtime.getURL(path);
+    };
+    
+    // Try different possible paths for the icon
+    tryLoadIcon([
+        "icons/icon48.png",
+        "../icons/icon48.png",
+        "icon48.png",
+        "images/icon48.png",
+        "/icons/icon48.png"
+    ]);
+    
+    iconContainer.appendChild(icon);
+    
+    // Title container
+    let titleContainer = document.createElement("div");
+    titleContainer.style.cssText = `
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    `;
+    
+    // Main title
+    let mainTitle = document.createElement("div");
+    mainTitle.textContent = "Instalando script";
+    mainTitle.style.cssText = `
+        font-weight: bold;
+        font-size: 16px;
+        color: white;
+    `;
+    
+    // Script name
+    let scriptName = document.createElement("div");
+    scriptName.textContent = `${r}, ${n}`;
+    scriptName.style.cssText = `
+        font-size: 14px;
+        font-weight: 500;
+        color: #3498db;
+    `;
+    
+    titleContainer.appendChild(mainTitle);
+    titleContainer.appendChild(scriptName);
+    
+    headerSection.appendChild(iconContainer);
+    headerSection.appendChild(titleContainer);
+    
+    // Script info section
+    let infoSection = document.createElement("div");
+    infoSection.style.cssText = `
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 15px;
+        padding: 10px;
+        background: rgba(0,0,0,0.2);
+        border-radius: 4px;
+    `;
+    
+    
+    // Description
+    let descriptionInfo = document.createElement("div");
+    descriptionInfo.style.cssText = `
+        margin-bottom: 8px;
+    `;
+    
+    let descriptionText = document.createElement("div");
+    descriptionText.textContent = i || "Adds a button that scrolls to the top of each response on ChatGPT.com";
+    descriptionText.style.cssText = `
+        font-size: 13px;
+        color: #ecf0f1;
+    `;
+    
+    descriptionInfo.appendChild(descriptionText);
+    
+    // Metadata section
+    let metadataSection = document.createElement("div");
+    metadataSection.style.cssText = `
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 8px;
+    `;
+    
+    // Grant metadata
+    let grantInfo = document.createElement("div");
+    grantInfo.style.cssText = `
+        display: flex;
+        flex-direction: column;
+    `;
+    
+    let grantLabel = document.createElement("div");
+    grantLabel.textContent = "@grant";
+    grantLabel.style.cssText = `
         font-size: 12px;
-        margin-top: 5px;
-        max-width: 500px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        opacity: 0.9;
-      `, p.title = i), a.appendChild(c), a.appendChild(d), s && a.appendChild(l), i && a.appendChild(p), document.createElement("div"));
-    c.style.cssText = `
-    display: flex;
-    gap: 12px;
-    align-items: center;
-`;
-    let u = document.createElement("button"),
-        m = (u.textContent = "Instalar", u.style.cssText = `
-    background: #4CAF50;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.2s;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-`, u.onmouseover = () => {
-            u.style.background = "#45a049"
-        }, u.onmouseout = () => {
-            u.style.background = "#4CAF50"
-        }, document.createElement("button")),
-        x = (m.textContent = "Descargar", m.style.cssText = `
-    background: #3498db;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.2s;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-`, m.onmouseover = () => {
-            m.style.background = "#2980b9"
-        }, m.onmouseout = () => {
-            m.style.background = "#3498db"
-        }, document.createElement("button")),
-        h = (x.textContent = "Instalar y Descargar", x.style.cssText = `
-    background: #9b59b6;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.2s;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-`, x.onmouseover = () => {
-            x.style.background = "#8e44ad"
-        }, x.onmouseout = () => {
-            x.style.background = "#9b59b6"
-        }, document.createElement("button")),
-        g = (h.textContent = "Editar", h.style.cssText = `
-    background: #f39c12;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.2s;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-`, h.onmouseover = () => {
-            h.style.background = "#e67e22"
-        }, h.onmouseout = () => {
-            h.style.background = "#f39c12"
-        }, document.createElement("button"));
-
+        color: #7f8c8d;
+    `;
+    
+    // Extract grant values from script content
+    let grantValues = [];
+    if (o.scriptContent) {
+        const grantMatches = o.scriptContent.match(/@grant\s+(.+?)(\n|$)/g);
+        if (grantMatches && grantMatches.length > 0) {
+            grantValues = grantMatches.map(match => {
+                const value = match.replace(/@grant\s+/, '').trim();
+                return value;
+            });
+        }
+    }
+    
+    let grantValue = document.createElement("div");
+    grantValue.textContent = grantValues.length > 0 ? grantValues.join('\n') : "none";
+    grantValue.style.cssText = `
+        font-size: 12px;
+        color: #ecf0f1;
+    `;
+    
+    grantInfo.appendChild(grantLabel);
+    grantInfo.appendChild(grantValue);
+    
+    // Match metadata
+    let matchInfo = document.createElement("div");
+    matchInfo.style.cssText = `
+        display: flex;
+        flex-direction: column;
+    `;
+    
+    let matchLabel = document.createElement("div");
+    matchLabel.textContent = "@match";
+    matchLabel.style.cssText = `
+        font-size: 12px;
+        color: #7f8c8d;
+    `;
+    
+    // Extract match values from script content
+    let matchValues = [];
+    if (o.scriptContent) {
+        const matchMatches = o.scriptContent.match(/@match\s+(.+?)(\n|$)/g);
+        const includeMatches = o.scriptContent.match(/@include\s+(.+?)(\n|$)/g);
+        
+        if (matchMatches && matchMatches.length > 0) {
+            matchValues = matchMatches.map(match => {
+                return match.replace(/@match\s+/, '').trim();
+            });
+        }
+        
+        if (includeMatches && includeMatches.length > 0) {
+            const includeValues = includeMatches.map(match => {
+                return match.replace(/@include\s+/, '').trim();
+            });
+            matchValues = [...matchValues, ...includeValues];
+        }
+    }
+    
+    let matchValue = document.createElement("div");
+    matchValue.textContent = matchValues.length > 0 ? matchValues.join('\n') : "http://*/*\nhttps://*/*";
+    matchValue.style.cssText = `
+        font-size: 12px;
+        color: #ecf0f1;
+    `;
+    
+    matchInfo.appendChild(matchLabel);
+    matchInfo.appendChild(matchValue);
+    
+    metadataSection.appendChild(grantInfo);
+    metadataSection.appendChild(matchInfo);
+    
+    infoSection.appendChild(descriptionInfo);
+    infoSection.appendChild(metadataSection);
+    
+    // Buttons section
+    let buttonsSection = document.createElement("div");
+    buttonsSection.style.cssText = `
+        display: flex;
+        gap: 5px;
+        justify-content: flex-end;
+        margin-top: 10px;
+        padding: 8px;
+        border-radius: 4px;
+    `;
+    
+    // Install button
+    let installButton = document.createElement("button");
+    installButton.innerHTML = "Install <span style='opacity: 0.7; font-size: 11px; margin-left: 4px;'>(Ctrl+Enter)</span>";
+    installButton.style.cssText = `
+        background: #2c3e50;
+        color: white;
+        border: 1px solid #4CAF50;
+        padding: 6px 12px;
+        border-radius: 2px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: bold;
+        transition: background 0.2s;
+        display: flex;
+        align-items: center;
+    `;
+    installButton.onmouseover = () => {
+        installButton.style.background = "#374a5c";
+    };
+    installButton.onmouseout = () => {
+        installButton.style.background = "#2c3e50";
+    };
+    
+    // Cerrar button
+    let cancelButton = document.createElement("button");
+    cancelButton.textContent = "Cerrar";
+    cancelButton.style.cssText = `
+        background: #2c3e50;
+        color: white;
+        border: 1px solid #95a5a6;
+        padding: 6px 12px;
+        border-radius: 2px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: bold;
+        transition: background 0.2s;
+    `;
+    cancelButton.onmouseover = () => {
+        cancelButton.style.background = "#374a5c";
+    };
+    cancelButton.onmouseout = () => {
+        cancelButton.style.background = "#2c3e50";
+    };
+    
+    // Edit button
+    let editButton = document.createElement("button");
+    editButton.textContent = "Editar";
+    editButton.style.cssText = `
+        background: #2c3e50;
+        color: white;
+        border: 1px solid #f39c12;
+        padding: 6px 12px;
+        border-radius: 2px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: bold;
+        transition: background 0.2s;
+    `;
+    editButton.onmouseover = () => {
+        editButton.style.background = "#374a5c";
+    };
+    editButton.onmouseout = () => {
+        editButton.style.background = "#2c3e50";
+    };
+    
+    // Add a plus sign before each button text
+    const addPlusSign = (button, color) => {
+        const originalText = button.textContent || button.innerText;
+        button.innerHTML = `<span style="color: ${color}; margin-right: 4px;">+</span>${originalText}`;
+    };
+    
+    addPlusSign(cancelButton, "#95a5a6");
+    addPlusSign(editButton, "#f39c12");
+    
+    // Change the order to match the image
+    buttonsSection.appendChild(installButton);
+    buttonsSection.appendChild(cancelButton);
+    buttonsSection.appendChild(editButton);
+    
+    // Add all sections to main container
+    t.appendChild(headerSection);
+    t.appendChild(infoSection);
+    t.appendChild(buttonsSection);
+    
+    // Download function
     function b() {
         var e = new Blob([o.scriptContent], {
                 type: "text/javascript"
@@ -290,61 +485,55 @@ function createInstallUI(o) {
             t = document.createElement("a");
         t.href = e, t.download = r.replace(/[^a-z0-9]/gi, "_").toLowerCase() + ".user.js", document.body.appendChild(t), t.click(), document.body.removeChild(t), URL.revokeObjectURL(e)
     }
-    g.textContent = "Cancelar", g.style.cssText = `
-    background: #95a5a6;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.2s;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-`, g.onmouseover = () => {
-        g.style.background = "#7f8c8d"
-    }, g.onmouseout = () => {
-        g.style.background = "#95a5a6"
-    }, u.addEventListener("click", () => {
+    
+    // Button event listeners
+    installButton.addEventListener("click", () => {
         chrome.runtime.sendMessage({
             action: "addScript",
             scriptContent: o.scriptContent
         }, e => {
             e && e.success ? showNotification("Script instalado correctamente!") : showNotification("Error al instalar el script: " + (e?.error || "Error desconocido"), !0), t.remove()
         })
-    }), m.addEventListener("click", () => {
-        b(), showNotification("Script descargado correctamente!"), t.remove()
-    }), x.addEventListener("click", () => {
-        chrome.runtime.sendMessage({
-            action: "addScript",
-            scriptContent: o.scriptContent
-        }, e => {
-            e && e.success ? (b(), showNotification("Script instalado y descargado correctamente!")) : (showNotification("Error al instalar el script: " + (e?.error || "Error desconocido"), !0), b()), t.remove()
-        })
-    }), h.addEventListener("click", () => {
+    });
+    
+    editButton.addEventListener("click", () => {
         chrome.runtime.sendMessage({
             action: "openScriptInEditor",
             scriptContent: o.scriptContent
         }), t.remove()
-    }), g.addEventListener("click", () => {
+    });
+    
+    cancelButton.addEventListener("click", () => {
         t.remove()
-    }), c.appendChild(u), c.appendChild(m), c.appendChild(x), c.appendChild(h), c.appendChild(g), t.appendChild(e), t.appendChild(a), t.appendChild(c), document.body.appendChild(t);
-    let f = document.createElement("div");
-    f.innerHTML = "&times;", f.style.cssText = `
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 20px;
-    cursor: pointer;
-    color: #95a5a6;
-    transition: color 0.2s;
-`, f.onmouseover = () => {
-        f.style.color = "#ffffff"
-    }, f.onmouseout = () => {
-        f.style.color = "#95a5a6"
-    }, f.onclick = () => {
-        t.remove()
-    }, t.appendChild(f)
+    });
+    
+    // Close button
+    let closeButton = document.createElement("div");
+    closeButton.innerHTML = "&times;";
+    closeButton.style.cssText = `
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 20px;
+        cursor: pointer;
+        color: #95a5a6;
+        transition: color 0.2s;
+    `;
+    closeButton.onmouseover = () => {
+        closeButton.style.color = "#ffffff";
+    };
+    closeButton.onmouseout = () => {
+        closeButton.style.color = "#95a5a6";
+    };
+    closeButton.onclick = () => {
+        t.remove();
+    };
+    t.appendChild(closeButton);
+    
+    // Add to document
+    document.body.appendChild(t);
 }
+
 async function fetchScript(r) {
   try {
       try {
