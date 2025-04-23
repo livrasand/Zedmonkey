@@ -487,3 +487,153 @@ body {
 .current-line {
     background-color: hsla(0, 0%, 100%, .05)
 }
+
+/* Import button and dropdown styles */
+.search-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.search-container input {
+    flex: 1;
+}
+
+.search-container .btn {
+    margin-left: 5px;
+    background-color: #3a3a3a;
+    border-radius: 4px;
+    padding: 6px;
+}
+
+.search-container .btn:hover {
+    background-color: #4d4d4d;
+}
+
+.dropdown-menu {
+    position: absolute;
+    background-color: #2d2d2d;
+    border: 1px solid #3e3e3e;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    width: 230px;
+    z-index: 1;
+    display: none;
+    margin-top: 5px;
+    left: 10px;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-item {
+    padding: 8px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dropdown-item:hover {
+    background-color: #3a3a3a;
+}
+
+.dropdown-item svg {
+    color: #858585;
+}
+
+/* Cloud storage submenu */
+.cloud-submenu {
+    margin-top: 5px;
+    border-top: 1px solid #3e3e3e;
+    padding-top: 5px;
+    display: none;
+}
+
+.cloud-submenu.show {
+    display: block;
+}
+
+.cloud-item {
+    padding: 6px 12px 6px 30px;
+    font-size: 12px;
+}
+
+/* File input styling */
+#file-input {
+    display: none;
+}
+
+/* URL input dialog */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    display: none;
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+.modal-content {
+    background-color: #2d2d2d;
+    border-radius: 6px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid #3e3e3e;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.modal-body {
+    padding: 16px;
+}
+
+.modal-footer {
+    padding: 12px 16px;
+    border-top: 1px solid #3e3e3e;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: #a0a0a0;
+}
+
+.form-group input {
+    width: 100%;
+    background-color: #3a3a3a;
+    border: 1px solid #4d4d4d;
+    border-radius: 4px;
+    color: #e0e0e0;
+    font-size: 13px;
+    padding: 8px 10px;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #0078d7;
+}

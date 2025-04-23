@@ -1,4 +1,4 @@
-<!doctypehtml>
+<!doctype html>
     <html lang=en>
     <meta charset=UTF-8>
     <meta content="width=device-width,initial-scale=1" name=viewport>
@@ -6,7 +6,45 @@
     <link href=editor.min.css rel=stylesheet>
     <div class=app-container>
         <div class=scripts-sidebar>
-            <div class=sidebar-header><input id=search-scripts placeholder="Search and filter here..."></div>
+            <div class=sidebar-header>
+                <div class="search-container">
+                    <input id=search-scripts placeholder="Search and filter here...">
+                    <button id="import-button" class="btn icon-btn" title="Import script">
+                        <svg fill=none height=16 stroke=currentColor stroke-linecap=round stroke-linejoin=round stroke-width=2 viewBox="0 0 24 24" width=16 xmlns=http://www.w3.org/2000/svg>
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div id="import-dropdown" class="dropdown-menu">
+                    <div class="dropdown-item" id="create-new-script">
+                        <svg fill=none height=14 stroke=currentColor stroke-linecap=round stroke-linejoin=round stroke-width=2 viewBox="0 0 24 24" width=14 xmlns=http://www.w3.org/2000/svg>
+                            <path d="M12 5v14M5 12h14"></path>
+                        </svg>
+                        New Script
+                    </div>
+                    <div class="dropdown-item" id="import-local">
+                        <svg fill=none height=14 stroke=currentColor stroke-linecap=round stroke-linejoin=round stroke-width=2 viewBox="0 0 24 24" width=14 xmlns=http://www.w3.org/2000/svg>
+                            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                            <polyline points="13 2 13 9 20 9"></polyline>
+                        </svg>
+                        Local File
+                    </div>
+                    <div class="dropdown-item" id="import-url">
+                        <svg fill=none height=14 stroke=currentColor stroke-linecap=round stroke-linejoin=round stroke-width=2 viewBox="0 0 24 24" width=14 xmlns=http://www.w3.org/2000/svg>
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                        </svg>
+                        From URL
+                    </div>
+                    <div class="dropdown-item" id="import-cloud">
+                        <svg fill=none height=14 stroke=currentColor stroke-linecap=round stroke-linejoin=round stroke-width=2 viewBox="0 0 24 24" width=14 xmlns=http://www.w3.org/2000/svg>
+                            <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+                        </svg>
+                        Cloud Storage
+                    </div>
+                </div>
+            </div>
             <div class=scripts-list id=scripts-list></div>
         </div>
         <div class=editor-container>
