@@ -47,6 +47,7 @@
     "web_accessible_resources": [{
         "resources": [
             "scripts/*.js",
+            "onboarding/*",
             "content/content.js"
         ],
         "matches": ["<all_urls>"]

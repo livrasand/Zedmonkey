@@ -562,3 +562,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         // Add custom headers and response handling
     }
 });
+
+// Listener para detectar la primera instalación
+chrome.runtime.onInstalled.addListener((details) => {
+    if (details.reason === 'install') {
+        // Marcar como primera instalación
+        chrome.storage.local.set({ 'firstInstall': true }, () => {
+            console.log('Primera instalación detectada, mostrando onboarding');
+            // Abrir la página de onboarding
+            chrome.tabs.create({
+                url: chrome.runtime.getURL('onboarding/welcome.html')
+            });
+        });
+    }
+});

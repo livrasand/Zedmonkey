@@ -2,3 +2,4 @@ minify-js.py
 minify-html.py
 minify-css.py
 zedmonkey-*.zip
+/dev/_metadata/
