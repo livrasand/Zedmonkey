@@ -1,7 +1,7 @@
 # Zedmonkey <span style="background-color: #3D5AFE; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7em; vertical-align: middle;">βeta</span>
 
 <p align="center">
-  <img src="src-chrome/icons/icon128.png" alt="Zedmonkey Logo" width="128" height="128">
+  <img src="src/icons/icon128.png" alt="Zedmonkey Logo" width="128" height="128">
 </p>
 
 <p align="center">
