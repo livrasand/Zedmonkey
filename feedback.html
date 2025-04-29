@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zedmonkey Feedback</title>
+  <link rel="icon" type="image/png" href="src/icons/icon16.png">
+  <meta name="description" content="Help us improve Zedmonkey by sharing why you uninstalled the extension.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0b0f1a;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      text-align: center;
+    }
+    .container {
+      max-width: 400px;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 1.8em;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 1em;
+      color: #aaa;
+      margin-bottom: 20px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    label {
+      background: #151c2e;
+      padding: 12px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    label:hover {
+      background: #1d2740;
+    }
+    input[type="radio"] {
+      margin-right: 10px;
+    }
+    textarea {
+      background: #151c2e;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      resize: none;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 1em;
+      min-height: 100px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 12px;
+      background: #ff4747;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: 600;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #ff2f2f;
+    }
+    footer {
+      margin-top: 30px;
+      font-size: 0.8em;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1><i class="fas fa-bolt"></i> Zedmonkey Feedback</h1>
+    <p>Help us improve. Why did you uninstall Zedmonkey?</p>
+
+    <form action="https://formspree.io/f/xanoqyjp" method="POST">
+      <label>
+        <input type="radio" name="reason" value="Didn't work" required>
+        Didn't work as expected
+      </label>
+      <label>
+        <input type="radio" name="reason" value="Found better alternative">
+        Found a better alternative
+      </label>
+      <label>
+        <input type="radio" name="reason" value="Too complicated">
+        Too complicated to use
+      </label>
+      <label>
+        <input type="radio" name="reason" value="Not needed anymore">
+        No longer needed
+      </label>
+      <label>
+        <input type="radio" name="reason" value="Other">
+        Other reason
+      </label>
+      <textarea name="details" placeholder="Optional: Tell us more..."></textarea>
+      <button type="submit">Send Feedback</button>
+    </form>
+
+    <footer>© 2025 Zedmonkey Project</footer>
+  </div>
+
+</body>
+</html>

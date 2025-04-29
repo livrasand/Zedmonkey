@@ -576,3 +576,6 @@ chrome.runtime.onInstalled.addListener((details) => {
         });
     }
 });
+
+// Set uninstall URL to collect feedback when users uninstall the extension
+chrome.runtime.setUninstallURL('https://zedmonkey.vercel.app/feedback.html');
