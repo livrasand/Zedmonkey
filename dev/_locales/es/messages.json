@@ -1,0 +1,63 @@
+{
+  "extensionName": {
+    "message": "Zedmonkey",
+    "description": "Extension name"
+  },
+  "extensionDescription": {
+    "message": "Un administrador de scripts de usuario ultrarrápido diseñado para desarrolladores que exigen velocidad y eficiencia.",
+    "description": "Short description"
+  },
+  "htmlLang": { "message": "es" },
+  "title": { "message": "Bienvenido a Zedmonkey" },
+  "welcomeHeader": { "message": "Bienvenido a Zedmonkey" },
+  "welcomeSubtitle": {
+    "message": "El administrador de userscripts de próxima generación creado para velocidad",
+    "description": "Subtitle under main header"
+  },
+  "step1_title": { "message": "¿Qué es Zedmonkey?" },
+  "step1_text": {
+    "message": "Zedmonkey es una extensión ultrarrápida que te permite ejecutar userscripts personalizados en cualquier sitio web. Estos scripts pueden mejorar la funcionalidad, cambiar el diseño o automatizar tareas en tus sitios favoritos."
+  },
+  "step1_highlight": { "message": "Velocidad y eficiencia sin compromisos" },
+  "fasterExecution": { "message": "Ejecución más rápida" },
+  "lessMemory": { "message": "Menos memoria" },
+  "backgroundImpact": { "message": "Impacto en segundo plano" },
+  "step2_title": { "message": "¿Cómo cargo un userscript?" },
+  "step2_text": {
+    "message": "Puedes crear tus propios scripts o instalar scripts existentes de sitios como Greasyfork u OpenUserJS. Simplemente haz clic en el botón \"+\" en la ventana emergente de Zedmonkey o haz clic en enlaces .user.js en la web."
+  },
+  "step2_highlight": { "message": "Instalación con un solo clic" },
+  "traditionalFormat": { "message": "Formato tradicional" },
+  "step3_title": { "message": "¿Dónde edito y activo/desactivo scripts?" },
+  "step3_text": {
+    "message": "Haz clic en el icono de Zedmonkey en la barra de herramientas para ver tus scripts. Desde allí, puedes activarlos o desactivarlos con interruptores, o hacer clic en un script para editarlo en el editor integrado."
+  },
+  "step3_highlight": { "message": "Control total sobre tus scripts" },
+  "cloudSync": { "message": "Sincronización en la nube" },
+  "cloudSyncDesc": {
+    "message": "Sincroniza con Dropbox, Google Drive y otros servicios"
+  },
+  "enhancedSecurity": { "message": "Seguridad mejorada" },
+  "enhancedSecurityDesc": {
+    "message": "Nuestro formato limpio tiene características de seguridad integradas"
+  },
+  "minimalistDesign": { "message": "Diseño minimalista" },
+  "minimalistDesignDesc": {
+    "message": "Límite de 13KB asegura un rendimiento óptimo"
+  },
+  "fullCompatibility": { "message": "Compatibilidad total" },
+  "fullCompatibilityDesc": {
+    "message": "Funciona con formatos tradicionales de userscripts"
+  },
+  "prev": { "message": "Anterior" },
+  "next": { "message": "Siguiente" },
+  "viewExample": { "message": "Ver ejemplo" },
+  "skip": { "message": "Saltar tutorial" },
+  "trialMessage": {
+    "message": "Prueba Zedmonkey durante"
+  },
+  "trialHighlight": {
+    "message": "7 días y siente la diferencia"
+  },
+  "footer": { "message": "© 2025 Proyecto Zedmonkey. Ligera por diseño, potente por defecto." }
+}

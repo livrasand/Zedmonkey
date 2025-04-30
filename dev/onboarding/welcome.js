@@ -1,4 +1,25 @@
+function i18nReplace() {
+  const elements = document.querySelectorAll('*');
+  elements.forEach(el => {
+    for (const node of el.childNodes) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const match = node.textContent.trim().match(/^__MSG_(\w+)__$/);
+        if (match) {
+          const msg = chrome.i18n.getMessage(match[1]);
+          if (msg) node.textContent = msg + ' ';
+        }
+      }
+    }
+  });
+
+  document.documentElement.lang = chrome.i18n.getMessage('htmlLang') || 'en';
+  document.title = chrome.i18n.getMessage('title') || document.title;
+}
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
+     i18nReplace();
     // Elementos del DOM
     const stepIndicators = document.querySelectorAll('.step-indicator');
     const stepContents = document.querySelectorAll('.step-content');
