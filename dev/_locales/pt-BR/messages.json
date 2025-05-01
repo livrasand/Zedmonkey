@@ -1,6 +1,6 @@
 {
   "extensionName": {
-    "message": "Zedmonkey",
+    "message": "Zedmonkey: Gerenciador de scripts de usuário ultrarrápido",
     "description": "Extension name"
   },
   "extensionDescription": {
@@ -29,21 +29,5 @@
   "next": { "message": "Próximo" },
   "viewExample": { "message": "Ver exemplo" },
   "skip": { "message": "Pular tutorial" },
-  "footer": { "message": "© 2025 Projeto Zedmonkey. Leve por design, poderoso por padrão." },
-  "welcomeSubtitle": "O gerenciador de userscripts de próxima geração construído para velocidade",
-  "fasterExecution": "Execução mais rápida",
-  "lessMemory": "Menos memória",
-  "backgroundImpact": "Impacto em segundo plano",
-  "traditionalFormat": "Formato tradicional",
-  "cloudSync": "Sincronização na nuvem",
-  "cloudSyncDesc": "Sincronize com Dropbox, Google Drive e outros serviços",
-  "enhancedSecurity": "Segurança aprimorada",
-  "enhancedSecurityDesc": "Nosso formato limpo possui recursos de segurança integrados",
-  "minimalistDesign": "Design minimalista",
-  "minimalistDesignDesc": "Limite de 13KB garante desempenho ideal",
-  "fullCompatibility": "Compatibilidade total",
-  "fullCompatibilityDesc": "Funciona com formatos tradicionais de userscripts",
-  "trialMessage": "Experimente o Zedmonkey por",
-  "trialHighlight": "7 dias e sinta a diferença"
+  "footer": { "message": "© 2025 Projeto Zedmonkey. Leve por design, poderoso por padrão." }
 }
-

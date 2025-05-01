@@ -1,6 +1,6 @@
 {
   "extensionName": {
-    "message": "Zedmonkey",
+    "message": "Zedmonkey: Gestor de scripts de usuario ultrarrápido",
     "description": "Extension name"
   },
   "extensionDescription": {
@@ -53,11 +53,5 @@
   "next": { "message": "Siguiente" },
   "viewExample": { "message": "Ver ejemplo" },
   "skip": { "message": "Saltar tutorial" },
-  "trialMessage": {
-    "message": "Prueba Zedmonkey durante"
-  },
-  "trialHighlight": {
-    "message": "7 días y siente la diferencia"
-  },
   "footer": { "message": "© 2025 Proyecto Zedmonkey. Ligera por diseño, potente por defecto." }
 }

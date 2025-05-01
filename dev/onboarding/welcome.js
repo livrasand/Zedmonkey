@@ -1,12 +1,21 @@
+// Función optimizada para reemplazar textos i18n
 function i18nReplace() {
-  const elements = document.querySelectorAll('*');
-  elements.forEach(el => {
+  document.querySelectorAll('[class^="__MSG_"], [id^="__MSG_"], [data-i18n]').forEach(el => {
+    const key = el.dataset.i18n || el.id.replace('__MSG_', '').replace('__', '') || el.className.replace('__MSG_', '').replace('__', '');
+    if (key) {
+      const msg = chrome.i18n.getMessage(key);
+      if (msg) el.textContent = msg;
+    }
+  });
+
+  // Reemplazar textos en nodos de texto
+  document.querySelectorAll('h1, h2, p, button, span').forEach(el => {
     for (const node of el.childNodes) {
       if (node.nodeType === Node.TEXT_NODE) {
         const match = node.textContent.trim().match(/^__MSG_(\w+)__$/);
         if (match) {
           const msg = chrome.i18n.getMessage(match[1]);
-          if (msg) node.textContent = msg + ' ';
+          if (msg) node.textContent = msg;
         }
       }
     }
@@ -16,95 +25,80 @@ function i18nReplace() {
   document.title = chrome.i18n.getMessage('title') || document.title;
 }
 
-
-
 document.addEventListener('DOMContentLoaded', () => {
-     i18nReplace();
-    // Elementos del DOM
-    const stepIndicators = document.querySelectorAll('.step-indicator');
-    const stepContents = document.querySelectorAll('.step-content');
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
-    const skipBtn = document.getElementById('skip-btn');
-    const exampleBtn = document.getElementById('example-btn');
+  // Inicializar traducciones
+  i18nReplace();
+  
+  // Elementos del DOM (cache para mejor rendimiento)
+  const stepIndicators = document.querySelectorAll('.step-indicator');
+  const stepContents = document.querySelectorAll('.step-content');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  const skipBtn = document.getElementById('skip-btn');
+  const exampleBtn = document.getElementById('example-btn');
+  
+  // Estado actual
+  let currentStep = 1;
+  const totalSteps = stepContents.length;
+  
+  // Métricas simplificadas
+  const startTime = Date.now();
+  const stepsViewed = [1];
+  
+  // Función para actualizar el paso actual (optimizada)
+  function updateStep(step) {
+    // Actualizar indicadores y contenido
+    stepIndicators.forEach(indicator => {
+      indicator.classList.toggle('active', parseInt(indicator.dataset.step) === step);
+    });
     
-    // Estado actual
-    let currentStep = 1;
-    let totalSteps = stepContents.length;
+    stepContents.forEach((content, index) => {
+      content.classList.toggle('active', index + 1 === step);
+    });
     
-    // Métricas
-    let metrics = {
-        startTime: Date.now(),
-        stepsViewed: [1],
-        completed: false,
-        skipped: false
-    };
+    // Actualizar botones
+    prevBtn.disabled = step === 1;
+    nextBtn.textContent = step === totalSteps ? chrome.i18n.getMessage('finish') || 'Finalizar' : chrome.i18n.getMessage('next') || 'Siguiente';
     
-    // Función para actualizar el paso actual
-    function updateStep(step) {
-        // Actualizar indicadores
-        stepIndicators.forEach(indicator => {
-            indicator.classList.remove('active');
-            if (parseInt(indicator.dataset.step) === step) {
-                indicator.classList.add('active');
-            }
-        });
-        
-        // Actualizar contenido
-        stepContents.forEach((content, index) => {
-            content.classList.remove('active');
-            if (index + 1 === step) {
-                content.classList.add('active');
-            }
-        });
-        
-        // Actualizar botones
-        prevBtn.disabled = step === 1;
-        nextBtn.textContent = step === totalSteps ? 'Finalizar' : 'Siguiente';
-        
-        // Registrar métrica
-        if (!metrics.stepsViewed.includes(step)) {
-            metrics.stepsViewed.push(step);
-        }
-        
-        // Guardar el paso actual
-        currentStep = step;
+    // Registrar métrica sin duplicados
+    if (!stepsViewed.includes(step)) {
+      stepsViewed.push(step);
     }
     
-    // Event listeners para los botones de navegación
-    prevBtn.addEventListener('click', () => {
-        if (currentStep > 1) {
-            updateStep(currentStep - 1);
-        }
+    // Actualizar paso actual
+    currentStep = step;
+  }
+  
+  // Event listeners para navegación
+  prevBtn.addEventListener('click', () => {
+    if (currentStep > 1) updateStep(currentStep - 1);
+  });
+  
+  nextBtn.addEventListener('click', () => {
+    if (currentStep < totalSteps) {
+      updateStep(currentStep + 1);
+    } else {
+      // Finalizar onboarding
+      completeOnboarding(true);
+    }
+  });
+  
+  // Event listener para indicadores de paso
+  stepIndicators.forEach(indicator => {
+    indicator.addEventListener('click', () => {
+      updateStep(parseInt(indicator.dataset.step));
     });
-    
-    nextBtn.addEventListener('click', () => {
-        if (currentStep < totalSteps) {
-            updateStep(currentStep + 1);
-        } else {
-            // Finalizar onboarding
-            completeOnboarding(true);
-        }
-    });
-    
-    // Event listener para los indicadores de paso
-    stepIndicators.forEach(indicator => {
-        indicator.addEventListener('click', () => {
-            const step = parseInt(indicator.dataset.step);
-            updateStep(step);
-        });
-    });
-    
-    // Event listener para el botón de saltar
-    skipBtn.addEventListener('click', () => {
-        metrics.skipped = true;
-        completeOnboarding(false);
-    });
-    
-    // Event listener para el botón de ejemplo
-    exampleBtn.addEventListener('click', () => {
-        // Script de ejemplo básico
-        const exampleScript = `// ==UserScript==
+  });
+  
+  // Event listener para saltar
+  skipBtn.addEventListener('click', () => {
+    completeOnboarding(false);
+  });
+  
+  // Event listener para ejemplo (script simplificado)
+  exampleBtn.addEventListener('click', () => {
+    // Script de ejemplo básico
+    const exampleScript = `// ==UserScript==
 // @name         Mi Primer Script
 // @namespace    zedmonkey
 // @version      1.0
@@ -140,48 +134,28 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => messageDiv.remove(), 500);
     }, 5000);
 })();`;
-        
-        // Guardar el script en el almacenamiento local
-        chrome.storage.local.set({
-            tempScriptContent: exampleScript
-        }, () => {
-            // Abrir el editor con el script cargado
-            chrome.tabs.create({
-                url: chrome.runtime.getURL("editor/editor.html?loadTemp=true")
-            });
-            
-            // Registrar métrica
-            metrics.viewedExample = true;
-            saveMetrics();
-        });
+    
+    // Guardar y abrir
+    chrome.storage.local.set({ tempScriptContent: exampleScript }, () => {
+      chrome.tabs.create({ url: chrome.runtime.getURL("editor/editor.html?loadTemp=true") });
     });
-    
-    // Función para completar el onboarding
-    function completeOnboarding(completed) {
-        // Actualizar métricas
-        metrics.completed = completed;
-        metrics.endTime = Date.now();
-        metrics.duration = metrics.endTime - metrics.startTime;
-        
-        // Guardar métricas
-        saveMetrics();
-        
-        // Marcar onboarding como completado
-        chrome.storage.local.set({ 'onboardingCompleted': true }, () => {
-            // Cerrar la página o redirigir
-            window.close();
-        });
-    }
-    
-    // Función para guardar métricas
-    function saveMetrics() {
-        chrome.storage.local.get('onboardingMetrics', (data) => {
-            const allMetrics = data.onboardingMetrics || [];
-            allMetrics.push(metrics);
-            chrome.storage.local.set({ 'onboardingMetrics': allMetrics });
-        });
-    }
-    
-    // Inicializar
-    updateStep(1);
+  });
+  
+  // Función para completar el onboarding (simplificada)
+  function completeOnboarding(completed) {
+    // Guardar estado mínimo necesario
+    chrome.storage.local.set({ 
+      'onboardingCompleted': true,
+      'onboardingMetrics': {
+        completed: completed,
+        duration: Date.now() - startTime,
+        stepsViewed: stepsViewed
+      }
+    }, () => {
+      window.close();
+    });
+  }
+  
+  // Inicializar
+  updateStep(1);
 });

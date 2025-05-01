@@ -5,18 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>__MSG_title__</title>
     <link rel="stylesheet" href="welcome.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Cargamos solo los iconos necesarios en lugar de toda la biblioteca -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=JetBrains+Mono:wght@300..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Iconos inline para evitar carga externa */
+        .icon-bolt:before { content: "⚡"; }
+        .icon-code:before { content: "📝"; }
+        .icon-settings:before { content: "⚙️"; }
+        .icon-link:before { content: "↗️"; }
+    </style>
 </head>
 <body>
-    <div class="stars-container">
-        <div class="stars"></div>
-        <div class="stars2"></div>
-        <div class="stars3"></div>
-    </div>
-    
     <div class="onboarding-container">
         <div class="onboarding-header">
             <img src="../icons/icon128.png" alt="Zedmonkey Logo" class="logo">
@@ -34,7 +35,7 @@
                 <h2>__MSG_step1_title__</h2>
                 <p>__MSG_step1_text__</p>
                 <div class="step-image">
-                    <i class="fas fa-bolt fa-4x"></i>
+                    <span class="icon icon-bolt"></span>
                 </div>
                 <div class="step-highlight">
                     <span class="highlight-text">__MSG_step1_highlight__</span>
@@ -45,7 +46,7 @@
                 <h2>__MSG_step2_title__</h2>
                 <p>__MSG_step2_text__</p>
                 <div class="step-image">
-                    <i class="fas fa-file-code fa-4x"></i>
+                    <span class="icon icon-code"></span>
                 </div>
                 <div class="step-highlight">
                     <span class="highlight-text">__MSG_step2_highlight__</span>
@@ -56,7 +57,7 @@
                 <h2>__MSG_step3_title__</h2>
                 <p>__MSG_step3_text__</p>
                 <div class="step-image">
-                    <i class="fas fa-sliders-h fa-4x"></i>
+                    <span class="icon icon-settings"></span>
                 </div>
                 <div class="step-highlight">
                     <span class="highlight-text">__MSG_step3_highlight__</span>
@@ -66,7 +67,7 @@
         
         <div class="onboarding-footer">
             <button id="prev-btn" class="nav-btn" disabled>__MSG_prev__</button>
-            <button id="example-btn" class="action-btn">__MSG_viewExample__ <i class="fas fa-external-link-alt"></i></button>
+            <button id="example-btn" class="action-btn">__MSG_viewExample__ <span class="icon-link"></span></button>
             <button id="next-btn" class="nav-btn">__MSG_next__</button>
         </div>
         

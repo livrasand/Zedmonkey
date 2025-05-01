@@ -1,6 +1,6 @@
 {
   "extensionName": {
-    "message": "Zedmonkey",
+    "message": "Zedmonkey: Ultra-Fast Userscript Manager",
     "description": "Extension name"
   },
   "extensionDescription": {
@@ -10,54 +10,24 @@
   "htmlLang": { "message": "en" },
   "title": { "message": "Welcome to Zedmonkey" },
   "welcomeHeader": { "message": "Welcome to Zedmonkey" },
-  "welcomeSubtitle": {
-    "message": "The next-gen userscript manager built for speed",
-    "description": "Subtitle under main header"
-  },
   "step1_title": { "message": "What is Zedmonkey?" },
   "step1_text": {
     "message": "Zedmonkey is a lightning-fast extension that lets you run custom userscripts on any website. These scripts can enhance functionality, change layouts, or automate tasks on your favorite sites."
   },
   "step1_highlight": { "message": "Speed and efficiency with no compromises" },
-  "fasterExecution": { "message": "Faster execution" },
-  "lessMemory": { "message": "Less memory" },
-  "backgroundImpact": { "message": "Background impact" },
   "step2_title": { "message": "How do I load a userscript?" },
   "step2_text": {
     "message": "You can create your own scripts or install existing ones from sites like Greasyfork or OpenUserJS. Just click the \"+\" button in the Zedmonkey popup or click on .user.js links across the web."
   },
   "step2_highlight": { "message": "One-click installation" },
-  "traditionalFormat": { "message": "Traditional format" },
   "step3_title": { "message": "Where do I edit and enable/disable scripts?" },
   "step3_text": {
     "message": "Click the Zedmonkey icon in the toolbar to see your scripts. From there, you can enable/disable them with toggles or click on a script to edit it in the built-in editor."
   },
   "step3_highlight": { "message": "Full control over your scripts" },
-  "cloudSync": { "message": "Cloud Sync" },
-  "cloudSyncDesc": {
-    "message": "Sync to Dropbox, Google Drive and other services"
-  },
-  "enhancedSecurity": { "message": "Enhanced Security" },
-  "enhancedSecurityDesc": {
-    "message": "Our clean format has built-in security features"
-  },
-  "minimalistDesign": { "message": "Minimalist Design" },
-  "minimalistDesignDesc": {
-    "message": "13KB limit ensures optimal performance"
-  },
-  "fullCompatibility": { "message": "Full Compatibility" },
-  "fullCompatibilityDesc": {
-    "message": "Works with traditional userscript formats"
-  },
   "prev": { "message": "Previous" },
   "next": { "message": "Next" },
   "viewExample": { "message": "View Example" },
   "skip": { "message": "Skip Tutorial" },
-  "trialMessage": {
-    "message": "Give Zedmonkey a try for just"
-  },
-  "trialHighlight": {
-    "message": "7 days and feel the difference"
-  },
   "footer": { "message": "© 2025 Zedmonkey Project. Lightweight by design, powerful by default." }
 }

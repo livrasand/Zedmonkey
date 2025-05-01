@@ -1,6 +1,6 @@
 {
   "extensionName": {
-    "message": "Zedmonkey",
+    "message": "Zedmonkey: 超高速ユーザースクリプトマネージャー",
     "description": "Extension name"
   },
   "extensionDescription": {
@@ -29,20 +29,5 @@
   "next": { "message": "次へ" },
   "viewExample": { "message": "サンプルを見る" },
   "skip": { "message": "チュートリアルをスキップ" },
-  "footer": { "message": "© 2025 Zedmonkeyプロジェクト。設計は軽量、性能は強力。" },
-  "welcomeSubtitle": "スピードのために構築された次世代ユーザースクリプトマネージャー",
-  "fasterExecution": "より高速な実行",
-  "lessMemory": "メモリ使用量削減",
-  "backgroundImpact": "バックグラウンド影響",
-  "traditionalFormat": "従来の形式",
-  "cloudSync": "クラウド同期",
-  "cloudSyncDesc": "Dropbox、Google Driveなどと同期",
-  "enhancedSecurity": "強化されたセキュリティ",
-  "enhancedSecurityDesc": "クリーンな形式に組み込みセキュリティ機能",
-  "minimalistDesign": "ミニマリストデザイン",
-  "minimalistDesignDesc": "13KB制限で最適なパフォーマンスを確保",
-  "fullCompatibility": "完全な互換性",
-  "fullCompatibilityDesc": "従来のユーザースクリプト形式と互換性あり",
-  "trialMessage": "Zedmonkeyをぜひお試しください",
-  "trialHighlight": "7日間で違いを実感"
+  "footer": { "message": "© 2025 Zedmonkeyプロジェクト。設計は軽量、性能は強力。" }
 }
