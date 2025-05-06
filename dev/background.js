@@ -127,104 +127,87 @@ async function storeScriptAsResource(script) {
     return resourcePath;
 }
 
+import { parseScriptMetadata } from './lib/parser.js';
+
 async function injectScript(tabId, script) {
-    // Añadir esta verificación al inicio
-    const injectionEnabled = await new Promise(resolve => {
-        chrome.storage.local.get('injectionEnabled', result => {
-            resolve(result.injectionEnabled !== false);
-        });
-    });
-    if (!injectionEnabled) return;
-
-    // Verificación existente del script individual
-    if (!script.enabled) return;
+    // Optimización: Validación única combinada
+    const [injectionEnabled, metadata] = await Promise.all([
+        chrome.storage.local.get('injectionEnabled').then(r => r.injectionEnabled !== false),
+        parseScriptMetadata(script.content)
+    ]);
     
-    const resourcePath = await storeScriptAsResource(script);
-    const result = await chrome.storage.local.get(resourcePath);
-    const scriptContent = result[resourcePath];
+    if (!injectionEnabled || !script.enabled || !metadata) return;
 
+    // Método de inyección optimizado (single attempt)
     try {
-        // Primer intento: IIFE en script tipo módulo
         await chrome.scripting.executeScript({
-            target: { tabId: tabId, allFrames: true },
-            func: (content) => {
+            target: {tabId, allFrames: true},
+            func: content => {
                 const script = document.createElement('script');
-                script.textContent = `(function(){${content}})();`;
-                script.setAttribute('type', 'module');
-                script.nonce = document.querySelector('script[nonce]')?.nonce || '';
-                script.crossOrigin = 'anonymous';
-                (document.head || document.documentElement).appendChild(script);
-                script.remove();
+                script.textContent = content;
+                (document.head || document.documentElement).appendChild(script).remove();
             },
-            args: [scriptContent],
+            args: [script.content],
             world: 'MAIN'
         });
     } catch (error) {
-        console.error('Main world injection failed:', error);
-        try {
-            // Segundo intento: sandbox en iframe
-            await chrome.scripting.executeScript({
-                target: { tabId: tabId },
-                func: (content) => {
-                    const sandbox = document.createElement('iframe');
-                    sandbox.style.display = 'none';
-                    sandbox.sandbox = 'allow-scripts';
-                    document.body.appendChild(sandbox);
-                    sandbox.contentWindow.eval(content);
-                    setTimeout(() => sandbox.remove(), 1000);
-                },
-                args: [scriptContent],
-                world: 'MAIN'
-            });
-        } catch (iframeError) {
-            console.log('Iframe sandbox injection failed, trying content script message...');
-            try {
-                // Tercer intento: comunicación con content script
-                const response = await chrome.tabs.sendMessage(tabId, {
-                    action: "injectScript",
-                    resourcePath: resourcePath
-                });
-
-                if (!response?.success) {
-                    throw new Error('Content script injection failed');
-                }
-            } catch (messageError) {
-                console.log('Content script fallback failed, trying nonce + src...');
-                try {
-                    // Cuarto intento: uso de script.src y nonce
-                    await chrome.scripting.executeScript({
-                        target: { tabId: tabId, allFrames: true },
-                        func: (resourcePath) => {
-                            const existingScript = document.querySelector('script[nonce]');
-                            const nonce = existingScript?.nonce || '';
-                            const script = document.createElement('script');
-                            script.src = chrome.runtime.getURL(resourcePath);
-                            script.setAttribute('nonce', nonce);
-                            script.crossOrigin = 'anonymous';
-                            (document.head || document.documentElement).appendChild(script);
-                            script.onload = () => script.remove();
-                        },
-                        args: [resourcePath],
-                        world: 'MAIN'
-                    });
-                } catch (finalNonceError) {
-                    console.log('Final fallback failed, trying direct file injection...');
-                    try {
-                        // Quinto y último intento: usar directamente la propiedad "files"
-                        await chrome.scripting.executeScript({
-                            target: { tabId, allFrames: true },
-                            files: [resourcePath],
-                            world: 'MAIN'
-                        });
-                    } catch (fileInjectionError) {
-                        console.error('All injection methods failed:', fileInjectionError);
-                    }
-                }
-            }
-        }
+        console.error('Inyección fallida:', error);
     }
 }
 
+async function injectScriptWithGM(tabId, script) {
+    await chrome.scripting.executeScript({
+        target: { tabId, allFrames: true },
+        files: ['lib/gmapi.js'],
+        world: 'MAIN'
+    });
+
+    // Add type="module" to script element creation
+    await chrome.scripting.executeScript({
+        target: { tabId, allFrames: true },
+        func: (content) => {
+            const scriptElem = document.createElement('script');
+            scriptElem.type = 'module'; // Add module type
+            scriptElem.textContent = content;
+            (document.head || document.documentElement).appendChild(scriptElem);
+            scriptElem.remove();
+        },
+        args: [script.content],
+        world: 'MAIN'
+    });
+}
+
+async function injectGMApi(tabId) {
+    try {
+        await chrome.scripting.executeScript({
+            target: { tabId, allFrames: true },
+            files: ['lib/gmapi.js'], // Ruta al archivo gmapi.js
+            world: 'MAIN'
+        });
+        console.log('gmapi.js inyectado correctamente');
+    } catch (error) {
+        console.error('Error al inyectar gmapi.js:', error);
+    }
+}
+
+async function injectScriptWithDependencies(tabId, scriptContent) {
+    await injectGMApi(tabId); // Inyecta gmapi.js primero
+    await chrome.scripting.executeScript({
+        target: { tabId, allFrames: true },
+        func: (content) => {
+            try {
+                const script = document.createElement('script');
+                script.textContent = content;
+                (document.head || document.documentElement).appendChild(script);
+                script.remove();
+            } catch (error) {
+                console.error('Error ejecutando el script:', error);
+            }
+        },
+        args: [scriptContent],
+        world: 'MAIN'
+    });
+}
 
 chrome.tabs.onActivated.addListener(e => {
     updateScriptCountBadge(e.tabId)

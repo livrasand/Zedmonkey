@@ -664,3 +664,24 @@ function startObserver() {
 
 startObserver();
 // Removed the duplicate DOMContentLoaded listener that was at the end of the file
+function initEditor(content) {
+    const editor = document.createElement('div');
+    editor.innerHTML = `
+        <textarea id="zedEditor" 
+                  style="width:100%; height:300px; 
+                         font-family: 'Fira Code', monospace;
+                         tab-size: 2" 
+                  spellcheck="false">${content}</textarea>
+    `;
+    
+    // Autocompletado básico
+    const textarea = editor.querySelector('#zedEditor');
+    textarea.addEventListener('keydown', e => {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            document.execCommand('insertText', false, '  ');
+        }
+    });
+    
+    return editor;
+}

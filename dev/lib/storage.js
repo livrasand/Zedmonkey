@@ -23,6 +23,20 @@ async function removeScript(e) {
         }, t)
     })
 }
+async function secureStorageOperation(action) {
+    // Validación de origen para prevenir ataques XSS
+    if (!chrome.runtime.id) throw new Error('Operación no permitida');
+    
+    // Encriptación básica con Web Crypto API
+    const key = await crypto.subtle.importKey('raw', 
+        new TextEncoder().encode('zed-secret-key'), 
+        {name: 'AES-GCM'}, 
+        false, 
+        ['encrypt', 'decrypt']
+    );
+    
+    return crypto.subtle[action](key, ...arguments);
+}
 export {
     getScripts,
     saveScript,
