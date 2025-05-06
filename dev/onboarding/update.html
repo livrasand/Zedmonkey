@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zedmonkey - ¡Actualizado!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0b0f1a;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+        .stars, .stars2, .stars3 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 90px 40px, #fff, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: animateStars 100s linear infinite;
+            opacity: 0.3;
+        }
+        .stars2 {
+            background-image: 
+                radial-gradient(1px 1px at 100px 150px, #eee, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 200px 220px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 300px 300px, #fff, rgba(0,0,0,0));
+            background-size: 300px 300px;
+            animation-delay: -50s;
+        }
+        .stars3 {
+            background-image: 
+                radial-gradient(1px 1px at 50px 80px, #eee, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 150px 120px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 250px 250px, #fff, rgba(0,0,0,0));
+            background-size: 400px 400px;
+            animation-delay: -75s;
+        }
+        @keyframes animateStars {
+            from { background-position: 0 0; }
+            to { background-position: 0 1000px; }
+        }
+        .container {
+            max-width: 500px;
+            padding: 40px;
+            background: #151c2e;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+        .logo {
+            max-width: 100px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: #3498db;
+        }
+        .version-tag {
+            display: inline-block;
+            background: #ff4747;
+            color: white;
+            font-size: 0.5em;
+            padding: 3px 8px;
+            border-radius: 10px;
+            vertical-align: middle;
+            margin-left: 8px;
+            text-transform: uppercase;
+        }
+        p {
+            font-size: 1.1em;
+            color: #aaa;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1em;
+            margin: 10px;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: #151c2e;
+            border: 1px solid #3498db;
+        }
+        .btn-secondary:hover {
+            background: #1d2740;
+        }
+        .btn i {
+            margin-right: 8px;
+        }
+        footer {
+            margin-top: 30px;
+            font-size: 0.8em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="stars-container">
+        <div class="stars"></div>
+        <div class="stars2"></div>
+        <div class="stars3"></div>
+    </div>
+
+    <div class="container">
+        <img src="../icons/icon128.png" alt="Zedmonkey Logo" class="logo">
+        <h1>Zedmonkey has been updated!</h1>
+        
+        <p>
+            Thank you for using Zedmonkey. Your extension has been updated to the latest version.
+            To learn about all the new features and improvements in this version, visit our releases page on GitHub.
+        </p>
+        
+        <div class="actions">
+            <a href="https://github.com/livrasand/Zedmonkey/releases" class="btn" target="_blank">
+                <i class="fas fa-tag"></i> View changelog
+            </a>
+            <a href="../editor/editor.html" class="btn btn-secondary">
+                <i class="fas fa-code"></i> Go to Editor
+            </a>
+        </div>
+        
+        <footer>
+            © 2025 Zedmonkey Project
+        </footer>
+    </div>
+
+    <script>
+        // Obtener y mostrar la versión actual de la extensión
+        document.addEventListener('DOMContentLoaded', function() {
+            const manifest = chrome.runtime.getManifest();
+            const versionTag = document.querySelector('.version-tag');
+            if (versionTag) {
+                versionTag.textContent = 'v' + manifest.version;
+            }
+        });
+    </script>
+</body>
+</html>

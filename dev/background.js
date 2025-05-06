@@ -557,6 +557,13 @@ chrome.runtime.onInstalled.addListener((details) => {
                 url: chrome.runtime.getURL('onboarding/welcome.html')
             });
         });
+    } else if (details.reason === 'update') {
+        // Detectar actualización de la extensión
+        console.log('Actualización detectada, mostrando página de novedades');
+        // Abrir página de novedades o changelog
+        chrome.tabs.create({
+            url: chrome.runtime.getURL('onboarding/update.html')
+        });
     }
 });
 
