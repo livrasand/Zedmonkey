@@ -1,0 +1,33 @@
+{
+  "extensionName": {
+    "message": "Zedmonkey",
+    "description": "Extension name"
+  },
+  "extensionDescription": {
+    "message": "Um gerenciador de userscript extremamente rápido, projetado para desenvolvedores que exigem velocidade e eficiência.",
+    "description": "Short description"
+  },
+  "htmlLang": { "message": "pt-BR" },
+  "title": { "message": "Bem-vindo ao Zedmonkey" },
+  "welcomeHeader": { "message": "Bem-vindo ao Zedmonkey" },
+  "step1_title": { "message": "O que é o Zedmonkey?" },
+  "step1_text": {
+    "message": "Zedmonkey é uma extensão ultrarrápida que permite executar userscripts personalizados em qualquer site. Esses scripts podem melhorar funcionalidades, alterar layouts ou automatizar tarefas em seus sites favoritos."
+  },
+  "step1_highlight": { "message": "Velocidade e eficiência sem compromissos" },
+  "step2_title": { "message": "Como carregar um userscript?" },
+  "step2_text": {
+    "message": "Você pode criar seus próprios scripts ou instalar scripts existentes de sites como Greasyfork ou OpenUserJS. Basta clicar no botão \"+\" no popup do Zedmonkey ou em links .user.js pela web."
+  },
+  "step2_highlight": { "message": "Instalação com um clique" },
+  "step3_title": { "message": "Onde editar e ativar/desativar scripts?" },
+  "step3_text": {
+    "message": "Clique no ícone do Zedmonkey na barra de ferramentas para ver seus scripts. A partir daí, você pode ativar/desativar com os botões ou clicar em um script para editá-lo no editor integrado."
+  },
+  "step3_highlight": { "message": "Controle total dos seus scripts" },
+  "prev": { "message": "Anterior" },
+  "next": { "message": "Próximo" },
+  "viewExample": { "message": "Ver exemplo" },
+  "skip": { "message": "Pular tutorial" },
+  "footer": { "message": "© 2025 Projeto Zedmonkey. Leve por design, poderoso por padrão." }
+}

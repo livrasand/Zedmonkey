@@ -175,200 +175,201 @@
         </section>
         
         <section id="comparison" class="comparison-section">
-            <h2>Zedmonkey vs. La Competencia</h2>
-            <p class="comparison-intro">
-                Los datos no mienten. Descubre cómo Zedmonkey supera a otros gestores de userscripts en cada métrica crítica.
-            </p>
-            
-            <div class="competitor-selector">
-                <label for="competitor-select">Comparar con:</label>
-                <select id="competitor-select" onchange="updateComparisonTable()">
-                    <option value="all" selected>Todos los competidores</option>
-                    <option value="tampermonkey">Tampermonkey</option>
-                    <option value="violentmonkey">Violentmonkey</option>
-                    <option value="firemonkey">Firemonkey</option>
-                    <option value="wildmonkey">Wildmonkey</option>
-                    <option value="scriptcat">ScriptCat</option>
-                    <option value="greasemonkey">Greasemonkey</option>
-                    <option value="userscripts">Userscripts (Safari)</option>
-                    <option value="stay">Stay for Browser</option>
-                    <option value="scriptforme">Script for Me</option>
-                    <option value="oildrop">Oildrop</option>
-                </select>
-            </div>
-            
-            <div class="comparison-table-container">
-                <table class="comparison-table" id="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Métrica</th>
-                            <th class="highlight-column">Zedmonkey</th>
-                            <th class="competitor tampermonkey">Tampermonkey</th>
-                            <th class="competitor violentmonkey">Violentmonkey</th>
-                            <th class="competitor firemonkey hide">Firemonkey</th>
-                            <th class="competitor wildmonkey hide">Wildmonkey</th>
-                            <th class="competitor scriptcat hide">ScriptCat</th>
-                            <th class="competitor greasemonkey hide">Greasemonkey</th>
-                            <th class="competitor userscripts hide">Userscripts</th>
-                            <th class="competitor stay hide">Stay</th>
-                            <th class="competitor scriptforme hide">Script for Me</th>
-                            <th class="competitor oildrop hide">Oildrop</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Tiempo de ejecución (ms)</td>
-                            <td class="highlight-column">0.2</td>
-                            <td class="competitor tampermonkey">14.1</td>
-                            <td class="competitor violentmonkey">0.7</td>
-                            <td class="competitor firemonkey hide">1.2</td>
-                            <td class="competitor wildmonkey hide">0.5</td>
-                            <td class="competitor scriptcat hide">3.8</td>
-                            <td class="competitor greasemonkey hide">2.1</td>
-                            <td class="competitor userscripts hide">1.9</td>
-                            <td class="competitor stay hide">2.5</td>
-                            <td class="competitor scriptforme hide">0.9</td>
-                            <td class="competitor oildrop hide">0.8</td>
-                        </tr>
-                        <tr>
-                            <td>Tiempo total (ms)</td>
-                            <td class="highlight-column">0.2</td>
-                            <td class="competitor tampermonkey">14.8</td>
-                            <td class="competitor violentmonkey">202.8</td>
-                            <td class="competitor firemonkey hide">95.3</td>
-                            <td class="competitor wildmonkey hide">45.2</td>
-                            <td class="competitor scriptcat hide">187.6</td>
-                            <td class="competitor greasemonkey hide">110.4</td>
-                            <td class="competitor userscripts hide">78.5</td>
-                            <td class="competitor stay hide">156.2</td>
-                            <td class="competitor scriptforme hide">67.3</td>
-                            <td class="competitor oildrop hide">52.1</td>
-                        </tr>
-                        <tr>
-                            <td>Uso de memoria (KB)</td>
-                            <td class="highlight-column">30,500</td>
-                            <td class="competitor tampermonkey">57,752</td>
-                            <td class="competitor violentmonkey">41,080</td>
-                            <td class="competitor firemonkey hide">38,450</td>
-                            <td class="competitor wildmonkey hide">25,120</td>
-                            <td class="competitor scriptcat hide">62,340</td>
-                            <td class="competitor greasemonkey hide">45,780</td>
-                            <td class="competitor userscripts hide">32,150</td>
-                            <td class="competitor stay hide">48,920</td>
-                            <td class="competitor scriptforme hide">35,670</td>
-                            <td class="competitor oildrop hide">31,240</td>
-                        </tr>
-                        <tr>
-                            <td>Memoria JavaScript (KB)</td>
-                            <td class="highlight-column">1,426</td>
-                            <td class="competitor tampermonkey">4,573</td>
-                            <td class="competitor violentmonkey">3,448</td>
-                            <td class="competitor firemonkey hide">3,125</td>
-                            <td class="competitor wildmonkey hide">1,875</td>
-                            <td class="competitor scriptcat hide">5,240</td>
-                            <td class="competitor greasemonkey hide">3,980</td>
-                            <td class="competitor userscripts hide">2,750</td>
-                            <td class="competitor stay hide">4,120</td>
-                            <td class="competitor scriptforme hide">2,980</td>
-                            <td class="competitor oildrop hide">2,450</td>
-                        </tr>
-                        <tr>
-                            <td>Uso de CPU (%)</td>
-                            <td class="highlight-column">0.0</td>
-                            <td class="competitor tampermonkey">0.1</td>
-                            <td class="competitor violentmonkey">0.0</td>
-                            <td class="competitor firemonkey hide">0.1</td>
-                            <td class="competitor wildmonkey hide">0.0</td>
-                            <td class="competitor scriptcat hide">0.2</td>
-                            <td class="competitor greasemonkey hide">0.1</td>
-                            <td class="competitor userscripts hide">0.0</td>
-                            <td class="competitor stay hide">0.1</td>
-                            <td class="competitor scriptforme hide">0.0</td>
-                            <td class="competitor oildrop hide">0.0</td>
-                        </tr>
-                        <tr>
-                            <td>Tamaño de extensión (KB)</td>
-                            <td class="highlight-column">13</td>
-                            <td class="competitor tampermonkey">1,590</td>
-                            <td class="competitor violentmonkey">640</td>
-                            <td class="competitor firemonkey hide">520</td>
-                            <td class="competitor wildmonkey hide">25</td>
-                            <td class="competitor scriptcat hide">3,700</td>
-                            <td class="competitor greasemonkey hide">850</td>
-                            <td class="competitor userscripts hide">420</td>
-                            <td class="competitor stay hide">1,720</td>
-                            <td class="competitor scriptforme hide">380</td>
-                            <td class="competitor oildrop hide">960</td>
-                        </tr>
-                        <tr>
-                            <td>Procesos en segundo plano</td>
-                            <td class="highlight-column">Ninguno cuando inactivo</td>
-                            <td class="competitor tampermonkey">Siempre activo</td>
-                            <td class="competitor violentmonkey">Siempre activo</td>
-                            <td class="competitor firemonkey hide">Mínimo</td>
-                            <td class="competitor wildmonkey hide">Ninguno cuando inactivo</td>
-                            <td class="competitor scriptcat hide">Tareas programadas</td>
-                            <td class="competitor greasemonkey hide">Mínimo</td>
-                            <td class="competitor userscripts hide">Mínimo</td>
-                            <td class="competitor stay hide">Múltiples funciones</td>
-                            <td class="competitor scriptforme hide">Mínimo</td>
-                            <td class="competitor oildrop hide">Sandbox aislado</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <div class="comparison-note">
-                <i class="fas fa-info-circle"></i>
-                <p>Todas las mediciones realizadas en un PC con Windows 10 usando el navegador Microsoft Edge y www.google.com como página de prueba. Valores más bajos son mejores.</p>
-            </div>
+    <h2>Zedmonkey vs. The Competition</h2>
+    <p class="comparison-intro">
+        The data doesn’t lie. See how Zedmonkey outperforms other userscript managers in every critical metric.
+    </p>
 
-            <div class="competitor-features">
-                <h3>Características únicas de los competidores</h3>
-                <div class="feature-cards">
-                    <div class="feature-card tampermonkey">
-                        <h4>Tampermonkey</h4>
-                        <p>La extensión más popular con amplio soporte para scripts de Greasemonkey y una gran comunidad de usuarios.</p>
-                    </div>
-                    <div class="feature-card violentmonkey">
-                        <h4>Violentmonkey</h4>
-                        <p>Alternativa open-source, rápida y ligera. Muy usada por desarrolladores técnicos.</p>
-                    </div>
-                    <div class="feature-card firemonkey hide">
-                        <h4>Firemonkey</h4>
-                        <p>Exclusiva para Firefox. Combina funciones de estilos CSS y scripts de usuario.</p>
-                    </div>
-                    <div class="feature-card wildmonkey hide">
-                        <h4>Wildmonkey</h4>
-                        <p>Variante experimental centrada en privacidad y ejecución segura.</p>
-                    </div>
-                    <div class="feature-card scriptcat hide">
-                        <h4>ScriptCat</h4>
-                        <p>Popular en Asia, con interfaz atractiva y funciones de administración de scripts.</p>
-                    </div>
-                    <div class="feature-card greasemonkey hide">
-                        <h4>Greasemonkey</h4>
-                        <p>El original, ahora en desuso relativo por su incompatibilidad con scripts modernos.</p>
-                    </div>
-                    <div class="feature-card userscripts hide">
-                        <h4>Userscripts</h4>
-                        <p>Exclusiva para Safari. Sencilla y minimalista.</p>
-                    </div>
-                    <div class="feature-card stay hide">
-                        <h4>Stay for Browser</h4>
-                        <p>Combina scripts con automatización de tareas web.</p>
-                    </div>
-                    <div class="feature-card scriptforme hide">
-                        <h4>Script for Me</h4>
-                        <p>Opción ligera centrada en usabilidad.</p>
-                    </div>
-                    <div class="feature-card oildrop hide">
-                        <h4>Oildrop</h4>
-                        <p>Enfocada en la privacidad, permite ejecución en modo sandbox seguro.</p>
-                    </div>
-                </div>
+    <div class="competitor-selector">
+        <label for="competitor-select">Compare with:</label>
+        <select id="competitor-select" onchange="updateComparisonTable()">
+            <option value="all" selected>All competitors</option>
+            <option value="tampermonkey">Tampermonkey</option>
+            <option value="violentmonkey">Violentmonkey</option>
+            <option value="firemonkey">Firemonkey</option>
+            <option value="wildmonkey">Wildmonkey</option>
+            <option value="scriptcat">ScriptCat</option>
+            <option value="greasemonkey">Greasemonkey</option>
+            <option value="userscripts">Userscripts (Safari)</option>
+            <option value="stay">Stay for Browser</option>
+            <option value="scriptforme">Script for Me</option>
+            <option value="oildrop">Oildrop</option>
+        </select>
+    </div>
+
+    <div class="comparison-table-container">
+        <table class="comparison-table" id="comparison-table">
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th class="highlight-column">Zedmonkey</th>
+                    <th class="competitor tampermonkey">Tampermonkey</th>
+                    <th class="competitor violentmonkey">Violentmonkey</th>
+                    <th class="competitor firemonkey hide">Firemonkey</th>
+                    <th class="competitor wildmonkey hide">Wildmonkey</th>
+                    <th class="competitor scriptcat hide">ScriptCat</th>
+                    <th class="competitor greasemonkey hide">Greasemonkey</th>
+                    <th class="competitor userscripts hide">Userscripts</th>
+                    <th class="competitor stay hide">Stay</th>
+                    <th class="competitor scriptforme hide">Script for Me</th>
+                    <th class="competitor oildrop hide">Oildrop</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Execution time (ms)</td>
+                    <td class="highlight-column">0.2</td>
+                    <td class="competitor tampermonkey">14.1</td>
+                    <td class="competitor violentmonkey">0.7</td>
+                    <td class="competitor firemonkey hide">1.2</td>
+                    <td class="competitor wildmonkey hide">0.5</td>
+                    <td class="competitor scriptcat hide">3.8</td>
+                    <td class="competitor greasemonkey hide">2.1</td>
+                    <td class="competitor userscripts hide">1.9</td>
+                    <td class="competitor stay hide">2.5</td>
+                    <td class="competitor scriptforme hide">0.9</td>
+                    <td class="competitor oildrop hide">0.8</td>
+                </tr>
+                <tr>
+                    <td>Total time (ms)</td>
+                    <td class="highlight-column">0.2</td>
+                    <td class="competitor tampermonkey">14.8</td>
+                    <td class="competitor violentmonkey">202.8</td>
+                    <td class="competitor firemonkey hide">95.3</td>
+                    <td class="competitor wildmonkey hide">45.2</td>
+                    <td class="competitor scriptcat hide">187.6</td>
+                    <td class="competitor greasemonkey hide">110.4</td>
+                    <td class="competitor userscripts hide">78.5</td>
+                    <td class="competitor stay hide">156.2</td>
+                    <td class="competitor scriptforme hide">67.3</td>
+                    <td class="competitor oildrop hide">52.1</td>
+                </tr>
+                <tr>
+                    <td>Memory usage (KB)</td>
+                    <td class="highlight-column">30,500</td>
+                    <td class="competitor tampermonkey">57,752</td>
+                    <td class="competitor violentmonkey">41,080</td>
+                    <td class="competitor firemonkey hide">38,450</td>
+                    <td class="competitor wildmonkey hide">25,120</td>
+                    <td class="competitor scriptcat hide">62,340</td>
+                    <td class="competitor greasemonkey hide">45,780</td>
+                    <td class="competitor userscripts hide">32,150</td>
+                    <td class="competitor stay hide">48,920</td>
+                    <td class="competitor scriptforme hide">35,670</td>
+                    <td class="competitor oildrop hide">31,240</td>
+                </tr>
+                <tr>
+                    <td>JavaScript memory (KB)</td>
+                    <td class="highlight-column">1,426</td>
+                    <td class="competitor tampermonkey">4,573</td>
+                    <td class="competitor violentmonkey">3,448</td>
+                    <td class="competitor firemonkey hide">3,125</td>
+                    <td class="competitor wildmonkey hide">1,875</td>
+                    <td class="competitor scriptcat hide">5,240</td>
+                    <td class="competitor greasemonkey hide">3,980</td>
+                    <td class="competitor userscripts hide">2,750</td>
+                    <td class="competitor stay hide">4,120</td>
+                    <td class="competitor scriptforme hide">2,980</td>
+                    <td class="competitor oildrop hide">2,450</td>
+                </tr>
+                <tr>
+                    <td>CPU usage (%)</td>
+                    <td class="highlight-column">0.0</td>
+                    <td class="competitor tampermonkey">0.1</td>
+                    <td class="competitor violentmonkey">0.0</td>
+                    <td class="competitor firemonkey hide">0.1</td>
+                    <td class="competitor wildmonkey hide">0.0</td>
+                    <td class="competitor scriptcat hide">0.2</td>
+                    <td class="competitor greasemonkey hide">0.1</td>
+                    <td class="competitor userscripts hide">0.0</td>
+                    <td class="competitor stay hide">0.1</td>
+                    <td class="competitor scriptforme hide">0.0</td>
+                    <td class="competitor oildrop hide">0.0</td>
+                </tr>
+                <tr>
+                    <td>Extension size (KB)</td>
+                    <td class="highlight-column">13</td>
+                    <td class="competitor tampermonkey">1,590</td>
+                    <td class="competitor violentmonkey">640</td>
+                    <td class="competitor firemonkey hide">520</td>
+                    <td class="competitor wildmonkey hide">25</td>
+                    <td class="competitor scriptcat hide">3,700</td>
+                    <td class="competitor greasemonkey hide">850</td>
+                    <td class="competitor userscripts hide">420</td>
+                    <td class="competitor stay hide">1,720</td>
+                    <td class="competitor scriptforme hide">380</td>
+                    <td class="competitor oildrop hide">960</td>
+                </tr>
+                <tr>
+                    <td>Background processes</td>
+                    <td class="highlight-column">None when idle</td>
+                    <td class="competitor tampermonkey">Always active</td>
+                    <td class="competitor violentmonkey">Always active</td>
+                    <td class="competitor firemonkey hide">Minimal</td>
+                    <td class="competitor wildmonkey hide">None when idle</td>
+                    <td class="competitor scriptcat hide">Scheduled tasks</td>
+                    <td class="competitor greasemonkey hide">Minimal</td>
+                    <td class="competitor userscripts hide">Minimal</td>
+                    <td class="competitor stay hide">Multiple functions</td>
+                    <td class="competitor scriptforme hide">Minimal</td>
+                    <td class="competitor oildrop hide">Isolated sandbox</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="comparison-note">
+        <i class="fas fa-info-circle"></i>
+        <p>All measurements were taken on a Windows 10 PC using Microsoft Edge and www.google.com as the test page. Lower values are better.</p>
+    </div>
+
+    <div class="competitor-features">
+        <h3>Unique Features of Competitors</h3>
+        <div class="feature-cards">
+            <div class="feature-card tampermonkey">
+                <h4>Tampermonkey</h4>
+                <p>The most popular extension with broad support for Greasemonkey scripts and a large user community.</p>
             </div>
-        </section>
+            <div class="feature-card violentmonkey">
+                <h4>Violentmonkey</h4>
+                <p>Open-source, fast, and lightweight alternative. Widely used by technical developers.</p>
+            </div>
+            <div class="feature-card firemonkey hide">
+                <h4>Firemonkey</h4>
+                <p>Exclusive to Firefox. Combines CSS style features and userscripts.</p>
+            </div>
+            <div class="feature-card wildmonkey hide">
+                <h4>Wildmonkey</h4>
+                <p>Experimental variant focused on privacy and secure execution.</p>
+            </div>
+            <div class="feature-card scriptcat hide">
+                <h4>ScriptCat</h4>
+                <p>Popular in Asia, with an attractive interface and script management features.</p>
+            </div>
+            <div class="feature-card greasemonkey hide">
+                <h4>Greasemonkey</h4>
+                <p>The original one, now relatively obsolete due to incompatibility with modern scripts.</p>
+            </div>
+            <div class="feature-card userscripts hide">
+                <h4>Userscripts</h4>
+                <p>Exclusive to Safari. Simple and minimalist.</p>
+            </div>
+            <div class="feature-card stay hide">
+                <h4>Stay for Browser</h4>
+                <p>Combines scripts with web task automation.</p>
+            </div>
+            <div class="feature-card scriptforme hide">
+                <h4>Script for Me</h4>
+                <p>Lightweight option focused on usability.</p>
+            </div>
+            <div class="feature-card oildrop hide">
+                <h4>Oildrop</h4>
+                <p>Privacy-focused, allows execution in a secure sandbox mode.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
 
         <script>
             function updateComparisonTable() {
@@ -602,144 +603,135 @@
 
         <!-- Nueva sección de Apóyanos/Support -->
         <section id="support" class="support-section">
-            <h2>Apoya a <span class="highlight-text">Zedmonkey</span></h2>
-            <p class="support-intro">
-                Zedmonkey es un proyecto de código abierto mantenido por desarrolladores apasionados. Tu apoyo nos ayuda a seguir mejorando y manteniendo este proyecto.
-            </p>
-            
-            <div class="support-progress">
-                <div class="progress-label">
-                    <span>Patrocinadores cubrieron</span>
-                    <span class="progress-percentage">37%</span>
-                    <span>de los gastos este mes</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 37%;"></div>
-                </div>
+    <h2>Support <span class="highlight-text">Zedmonkey</span></h2>
+    <p class="support-intro">
+        Zedmonkey is an open-source project maintained by passionate developers. Your support helps us continue improving and maintaining this project.
+    </p>
+    
+    <div class="support-progress">
+        <div class="progress-label">
+            <span>Sponsors covered</span>
+            <span class="progress-percentage">0%</span>
+            <span>of this month's expenses</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: 0%;"></div>
+        </div>
+    </div>
+    
+    <div class="donation-options">
+        <a href="https://github.com/sponsors/livrasand" class="donation-option">
+            <div class="donation-icon">
+                <i class="fab fa-github"></i>
             </div>
-            
-            <div class="donation-options">
-                <a href="https://github.com/sponsors/livrasand" class="donation-option">
-                    <div class="donation-icon">
-                        <i class="fab fa-github"></i>
-                    </div>
-                    <div class="donation-details">
-                        <h3>GitHub Sponsors</h3>
-                        <p>Apoya directamente a través de GitHub</p>
-                    </div>
-                </a>
-                
-                <a href="https://ko-fi.com/zedmonkey" class="donation-option">
-                    <div class="donation-icon">
-                        <i class="fas fa-coffee"></i>
-                    </div>
-                    <div class="donation-details">
-                        <h3>Ko-fi</h3>
-                        <p>Invítanos a un café</p>
-                    </div>
-                </a>
-                
-                <a href="https://patreon.com/zedmonkey" class="donation-option">
-                    <div class="donation-icon">
-                        <i class="fab fa-patreon"></i>
-                    </div>
-                    <div class="donation-details">
-                        <h3>Patreon</h3>
-                        <p>Conviértete en patrocinador mensual</p>
-                    </div>
-                </a>
-                
-                <a href="https://zedmonkey.github.io/crypto" class="donation-option">
-                    <div class="donation-icon">
-                        <i class="fab fa-bitcoin"></i>
-                    </div>
-                    <div class="donation-details">
-                        <h3>Crypto</h3>
-                        <p>Dona con Bitcoin, Ethereum o más</p>
-                    </div>
-                </a>
+            <div class="donation-details">
+                <h3>GitHub Sponsors</h3>
+                <p>Support us directly through GitHub</p>
             </div>
-            
-            <div class="support-note">
-                <i class="fas fa-heart"></i>
-                <p>Cada donación, sin importar su tamaño, nos ayuda a mantener Zedmonkey rápido, ligero y libre de anuncios.</p>
-            </div>
-        </section>
+        </a>
         
-        <!-- Nueva sección de Patrocinadores -->
-        <section id="sponsors" class="sponsors-section">
-            <h2>Nuestros <span class="highlight-text">Patrocinadores</span></h2>
-            <p class="sponsors-intro">
-                Estas organizaciones hacen posible el desarrollo continuo de Zedmonkey con su generoso apoyo.
-            </p>
-            
-            <div class="sponsors-tiers">
-                <!-- Tier Platinum -->
-                <div class="sponsors-tier platinum-tier">
-                    <h3 class="tier-title">Patrocinadores Platinum</h3>
-                    <div class="tier-description">Contribución anual: $3,600 USD</div>
-                    <div class="tier-sponsors">
-                        <div class="sponsor-placeholder">
-                            <i class="fas fa-building"></i>
-                            <p>Tu empresa aquí</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Tier Gold -->
-                <div class="sponsors-tier gold-tier">
-                    <h3 class="tier-title">Patrocinadores Gold</h3>
-                    <div class="tier-description">Contribución anual: $1,800 USD</div>
-                    <div class="tier-sponsors">
-                        <div class="sponsor-placeholder">
-                            <i class="fas fa-building"></i>
-                            <p>Tu empresa aquí</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Tier Silver -->
-                <div class="sponsors-tier silver-tier">
-                    <h3 class="tier-title">Patrocinadores Silver</h3>
-                    <div class="tier-description">Contribución anual: $900 USD</div>
-                    <div class="tier-sponsors">
-                        <div class="sponsor-placeholder">
-                            <i class="fas fa-building"></i>
-                            <p>Tu empresa aquí</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Tier Bronze -->
-                <div class="sponsors-tier bronze-tier">
-                    <h3 class="tier-title">Patrocinadores Bronze</h3>
-                    <div class="tier-description">Contribución anual: $450 USD</div>
-                    <div class="tier-sponsors">
-                        <div class="sponsor-placeholder">
-                            <i class="fas fa-building"></i>
-                            <p>Tu empresa aquí</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Tier Copper -->
-                <div class="sponsors-tier copper-tier">
-                    <h3 class="tier-title">Patrocinadores Copper</h3>
-                    <div class="tier-description">Contribución anual: $225 USD</div>
-                    <div class="tier-sponsors text-sponsors">
-                        <span class="text-sponsor">Tu empresa aquí</span>
-                    </div>
+        <a href="https://ko-fi.com/zedmonkey" class="donation-option">
+            <div class="donation-icon">
+                <i class="fas fa-coffee"></i>
+            </div>
+            <div class="donation-details">
+                <h3>Ko-fi</h3>
+                <p>Buy us a coffee</p>
+            </div>
+        </a>
+        
+        <a href="https://patreon.com/zedmonkeyproject" class="donation-option">
+            <div class="donation-icon">
+                <i class="fab fa-patreon"></i>
+            </div>
+            <div class="donation-details">
+                <h3>Patreon</h3>
+                <p>Become a monthly sponsor</p>
+            </div>
+        </a>
+    </div>
+    
+    <div class="support-note">
+        <i class="fas fa-heart"></i>
+        <p>Every donation, no matter the size, helps keep Zedmonkey fast, lightweight, and ad-free.</p>
+    </div>
+</section>
+
+<!-- Sponsors section -->
+<section id="sponsors" class="sponsors-section">
+    <h2>Our <span class="highlight-text">Sponsors</span></h2>
+    <p class="sponsors-intro">
+        These organizations make the ongoing development of Zedmonkey possible with their generous support.
+    </p>
+    
+    <div class="sponsors-tiers">
+        <!-- Platinum Tier -->
+        <div class="sponsors-tier platinum-tier">
+            <h3 class="tier-title">Platinum Sponsors</h3>
+            <div class="tier-description">Annual contribution: $3,600 USD</div>
+            <div class="tier-sponsors">
+                <div class="sponsor-placeholder">
+                    <i class="fas fa-building"></i>
+                    <p>Your company here</p>
                 </div>
             </div>
-            
-            <div class="sponsor-cta">
-                <h3>¿Interesado en patrocinar Zedmonkey?</h3>
-                <p>Conviértete en patrocinador y obtén visibilidad para tu marca mientras apoyas el desarrollo de software de código abierto.</p>
-                <a href="mailto:sponsor@zedmonkey.dev" class="secondary-btn">
-                    <i class="fas fa-envelope"></i> Contactar para patrocinio
-                </a>
+        </div>
+        
+        <!-- Gold Tier -->
+        <div class="sponsors-tier gold-tier">
+            <h3 class="tier-title">Gold Sponsors</h3>
+            <div class="tier-description">Annual contribution: $1,800 USD</div>
+            <div class="tier-sponsors">
+                <div class="sponsor-placeholder">
+                    <i class="fas fa-building"></i>
+                    <p>Your company here</p>
+                </div>
             </div>
-        </section>
+        </div>
+        
+        <!-- Silver Tier -->
+        <div class="sponsors-tier silver-tier">
+            <h3 class="tier-title">Silver Sponsors</h3>
+            <div class="tier-description">Annual contribution: $900 USD</div>
+            <div class="tier-sponsors">
+                <div class="sponsor-placeholder">
+                    <i class="fas fa-building"></i>
+                    <p>Your company here</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bronze Tier -->
+        <div class="sponsors-tier bronze-tier">
+            <h3 class="tier-title">Bronze Sponsors</h3>
+            <div class="tier-description">Annual contribution: $450 USD</div>
+            <div class="tier-sponsors">
+                <div class="sponsor-placeholder">
+                    <i class="fas fa-building"></i>
+                    <p>Your company here</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Copper Tier -->
+        <div class="sponsors-tier copper-tier">
+            <h3 class="tier-title">Copper Sponsors</h3>
+            <div class="tier-description">Annual contribution: $225 USD</div>
+            <div class="tier-sponsors text-sponsors">
+                <span class="text-sponsor">Your company here</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="sponsor-cta">
+        <h3>Interested in sponsoring Zedmonkey?</h3>
+        <p>Become a sponsor and gain visibility for your brand while supporting open-source software development.</p>
+        <a href="mailto:livrasand@outlook.com" class="secondary-btn">
+            <i class="fas fa-envelope"></i> Contact us for sponsorship
+        </a>
+    </div>
+</section>
+
         
         <footer>
             <div class="footer-content">

@@ -1,0 +1,33 @@
+{
+  "extensionName": {
+    "message": "Zedmonkey",
+    "description": "Extension name"
+  },
+  "extensionDescription": {
+    "message": "スピードと効率を求める開発者向けに設計された超高速のユーザー スクリプト マネージャーです。",
+    "description": "Short description"
+  },
+  "htmlLang": { "message": "ja" },
+  "title": { "message": "Zedmonkeyへようこそ" },
+  "welcomeHeader": { "message": "Zedmonkeyへようこそ" },
+  "step1_title": { "message": "Zedmonkeyとは？" },
+  "step1_text": {
+    "message": "Zedmonkeyは超高速の拡張機能で、任意のウェブサイトでカスタムユーザースクリプトを実行できます。これらのスクリプトは機能を強化したり、レイアウトを変更したり、お気に入りのサイトで作業を自動化できます。"
+  },
+  "step1_highlight": { "message": "妥協のないスピードと効率" },
+  "step2_title": { "message": "ユーザースクリプトの読み込み方法は？" },
+  "step2_text": {
+    "message": "自分でスクリプトを作成したり、Greasyfork や OpenUserJS などのサイトから既存のスクリプトをインストールできます。Zedmonkeyのポップアップで「+」ボタンをクリックするか、ウェブ上の.user.jsリンクをクリックするだけです。"
+  },
+  "step2_highlight": { "message": "ワンクリックでインストール" },
+  "step3_title": { "message": "スクリプトの編集や有効/無効はどこで？" },
+  "step3_text": {
+    "message": "ツールバーのZedmonkeyアイコンをクリックすると、スクリプトの一覧が表示されます。そこからスイッチで有効化/無効化したり、スクリプトをクリックして組み込みエディターで編集できます。"
+  },
+  "step3_highlight": { "message": "スクリプトを完全にコントロール" },
+  "prev": { "message": "前へ" },
+  "next": { "message": "次へ" },
+  "viewExample": { "message": "サンプルを見る" },
+  "skip": { "message": "チュートリアルをスキップ" },
+  "footer": { "message": "© 2025 Zedmonkeyプロジェクト。設計は軽量、性能は強力。" }
+}
