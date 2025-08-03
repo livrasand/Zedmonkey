@@ -2,11 +2,44 @@ import { parseUserscriptMetadata } from './lib/parser.js';
 
 async function getScripts() {
     console.log("getScripts: Attempting to retrieve scripts from storage.");
-    return new Promise(t => {
-        chrome.storage.local.get("scripts", e => {
-            const scripts = e.scripts || [];
-            console.log("getScripts: Retrieved scripts:", scripts);
-            t(scripts);
+    return new Promise((resolve, reject) => {
+        chrome.storage.local.get("scripts", (result) => {
+            if (chrome.runtime.lastError) {
+                console.error("getScripts: Chrome runtime error:", chrome.runtime.lastError);
+                reject(new Error(chrome.runtime.lastError.message));
+                return;
+            }
+            
+            try {
+                const scripts = result.scripts || [];
+                console.log("getScripts: Retrieved scripts:", scripts.length, "scripts");
+                
+                // Validate scripts structure
+                const validScripts = scripts.filter(script => {
+                    if (!script || typeof script !== 'object') {
+                        console.warn("getScripts: Invalid script object detected:", script);
+                        return false;
+                    }
+                    if (!script.id) {
+                        console.warn("getScripts: Script without ID detected:", script);
+                        return false;
+                    }
+                    if (!script.metadata) {
+                        console.warn("getScripts: Script without metadata detected:", script);
+                        script.metadata = { name: "Unnamed Script", version: "1.0" };
+                    }
+                    return true;
+                });
+                
+                if (validScripts.length !== scripts.length) {
+                    console.warn(`getScripts: Filtered out ${scripts.length - validScripts.length} invalid scripts`);
+                }
+                
+                resolve(validScripts);
+            } catch (error) {
+                console.error("getScripts: Error processing scripts:", error);
+                reject(error);
+            }
         });
     });
 }
@@ -383,22 +416,22 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     });
 });
 
-chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     console.log("onMessage: Received message:", request.action, request);
+    
     try {
         switch (request.action) {
             case "getScripts":
-                try {
-                    const scripts = await getScripts();
+                getScripts().then(scripts => {
                     const response = { scripts };
-                    console.log("onMessage: Sending response for getScripts (async/await):", response);
+                    console.log("onMessage: Sending response for getScripts:", response);
                     sendResponse(response);
-                } catch (error) {
+                }).catch(error => {
                     const response = { error: error.message };
-                    console.error("onMessage: Sending error response for getScripts (async/await):", response);
+                    console.error("onMessage: Sending error response for getScripts:", response);
                     sendResponse(response);
-                }
-                return true; // Indica que la respuesta será asíncrona
+                });
+                return true; // Keep message channel open for async response
             case "getMatchedScripts":
                 getScripts().then(scripts => {
                     const matchedScripts = scripts.filter(script => isScriptMatchingUrl(script, request.url));
@@ -515,21 +548,21 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                 return true;
             case 'proxyRequest':
                 console.log("onMessage: Received proxyRequest for URL:", request.url);
-                try {
-                    const response = await fetch(request.url, {
-                        method: request.method || 'GET',
-                        headers: request.headers || {},
-                        body: request.body || null
-                    });
+                fetch(request.url, {
+                    method: request.method || 'GET',
+                    headers: request.headers || {},
+                    body: request.body || null
+                }).then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                    const text = await response.text();
+                    return response.text();
+                }).then(text => {
                     sendResponse({ success: true, content: text });
-                } catch (error) {
+                }).catch(error => {
                     console.error("onMessage: Error proxying request:", error);
                     sendResponse({ success: false, error: error.message });
-                }
+                });
                 return true;
             default:
                 console.warn("onMessage: Unknown action received:", request.action);

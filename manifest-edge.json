@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Zedmonkey",
-    "version": "1.2.0",
+    "version": "1.5.0",
     "description": "Ultra-fast userscripts. Zero bloat. Zero background impact. Total dominance.",
     "homepage_url": "https://livra.github.io/Zedmonkey",
     "privacy_policy_url": "https://livra.github.io/Zedmonkey/privacy.html",
