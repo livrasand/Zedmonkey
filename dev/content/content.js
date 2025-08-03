@@ -1,72 +1,5 @@
-// Listen for injection messages from background
+// Listen for messages from background
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    // Handle script injection
-    if (message.action === "injectScript" && message.resourcePath) {
-        chrome.storage.local.get('injectionEnabled', result => {
-            if (result.injectionEnabled === false) return;
-            
-            const injectPrimary = () => {
-                try {
-                    const existingScript = document.querySelector('script[nonce]');
-                    const nonce = existingScript?.nonce || '';
-                    
-                    const script = document.createElement('script');
-                    script.src = chrome.runtime.getURL(message.resourcePath);
-                    script.setAttribute('nonce', nonce);
-                    script.setAttribute('type', 'module');
-                    script.crossOrigin = 'anonymous';
-
-                    const clone = script.cloneNode(true);
-                    (document.head || document.documentElement).appendChild(clone);
-
-                    clone.onload = () => {
-                        clone.remove();
-                        sendResponse({ success: true });
-                    };
-
-                    clone.onerror = () => {
-                        console.warn('Primary script injection failed, trying fallback...');
-                        injectFallback(); // Intenta la alternativa si falla
-                    };
-                } catch (error) {
-                    console.error('Primary injection exception:', error);
-                    injectFallback(); // En caso de excepción
-                }
-            };
-
-            const injectFallback = () => {
-                try {
-                    const script = document.createElement('script');
-                    script.src = chrome.runtime.getURL(message.resourcePath);
-                    script.type = 'text/javascript';
-
-                    const existingNonce = document.querySelector('script[nonce]')?.nonce || '';
-                    if (existingNonce) script.nonce = existingNonce;
-
-                    const clone = script.cloneNode(true);
-                    (document.head || document.documentElement).appendChild(clone);
-                    clone.remove();
-
-                    sendResponse({ success: true });
-                } catch (fallbackError) {
-                    console.error('Fallback injection also failed:', fallbackError);
-                    sendResponse({ success: false });
-                }
-            };
-
-            // Asegurar contexto adecuado
-            if (document.contentType === 'text/html') {
-                injectPrimary();
-            } else {
-                const blob = new Blob([`(${injectPrimary.toString()})()`], {type: 'text/javascript'});
-                const url = URL.createObjectURL(blob);
-                import(url).finally(() => URL.revokeObjectURL(url));
-            }
-        });
-        
-        return true; // Mantener canal abierto
-    }
-    
     // Handle userscript detection
     if (message.action === "detectUserscript") {
         let result = detectUserscripts();
@@ -104,12 +37,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             });
         }
         return true;
-    }
-    
-    // Handle scripts for current page
-    if (message.action === "getScriptsForCurrentPage") {
-        // This is handled by the initial injection code
-        return false;
     }
 });
 
@@ -534,32 +461,35 @@ function createInstallUI(o) {
     document.body.appendChild(t);
 }
 
-async function fetchScript(r) {
-  try {
-      try {
-          var e = await fetch(r);
-          if (e.ok) return await e.text();
-          throw new Error("Failed to fetch script")
-      } catch (e) {
-          return console.log("Direct fetch failed, trying XMLHttpRequest:", e), new Promise((e, t) => {
-              let o = new XMLHttpRequest;
-              o.open("GET", r, !0), o.onload = function() {
-                  200 <= o.status && o.status < 300 ? e(o.responseText) : t(new Error("XHR failed with status: " + o.status))
-              }, o.onerror = function() {
-                  t(new Error("XHR network error"))
-              }, o.send()
-          })
-      }
-  } catch (e) {
-      return e.message.includes("Extension context invalidated") || e.message.includes("context invalidated") ? (console.error("Extension context error. The extension may have been updated or reloaded."), showNotification("Extension was updated. Please refresh the page to use Zedmonkey features.", !0, 7e3), {
-          error: !0,
-          contextInvalidated: !0,
-          message: "Extension context invalidated. Please refresh the page."
-      }) : (console.error("Error fetching script:", e), {
-          error: !0,
-          message: e.message || "Unknown error"
-      })
-  }
+async function fetchScript(url) {
+    try {
+        const response = await chrome.runtime.sendMessage({
+            action: 'proxyRequest',
+            url: url,
+            method: 'GET'
+        });
+        if (response.success) {
+            return response.content;
+        } else {
+            throw new Error(response.error || "Unknown proxy error");
+        }
+    } catch (error) {
+        if (error.message.includes("Extension context invalidated") || error.message.includes("context invalidated")) {
+            console.error("Extension context error. The extension may have been updated or reloaded.");
+            showNotification("Extension was updated. Please refresh the page to use Zedmonkey features.", true, 7000);
+            return {
+                error: true,
+                contextInvalidated: true,
+                message: "Extension context invalidated. Please refresh the page."
+            };
+        } else {
+            console.error("Error fetching script:", error);
+            return {
+                error: true,
+                message: `Failed to fetch script from ${url}: ${error.message || "Unknown error"}`
+            };
+        }
+    }
 }
 
 function showNotification(e, t = !1, o = 3e3) {
@@ -602,15 +532,7 @@ function addUserscriptLinkHandlers() {
   })
 }
 
-// Initial injection for persisted scripts
-chrome.storage.sync.get({ injectionEnabled: true }, ({ injectionEnabled }) => {
-    if (injectionEnabled) {
-        chrome.runtime.sendMessage({ 
-            action: "getScriptsForCurrentPage",
-            url: window.location.href
-        });
-    }
-});
+
 
 // Auto-detect scripts on page load
 window.addEventListener("load", () => {
@@ -664,24 +586,3 @@ function startObserver() {
 
 startObserver();
 // Removed the duplicate DOMContentLoaded listener that was at the end of the file
-function initEditor(content) {
-    const editor = document.createElement('div');
-    editor.innerHTML = `
-        <textarea id="zedEditor" 
-                  style="width:100%; height:300px; 
-                         font-family: 'Fira Code', monospace;
-                         tab-size: 2" 
-                  spellcheck="false">${content}</textarea>
-    `;
-    
-    // Autocompletado básico
-    const textarea = editor.querySelector('#zedEditor');
-    textarea.addEventListener('keydown', e => {
-        if (e.key === 'Tab') {
-            e.preventDefault();
-            document.execCommand('insertText', false, '  ');
-        }
-    });
-    
-    return editor;
-}
