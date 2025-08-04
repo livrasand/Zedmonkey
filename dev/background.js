@@ -262,7 +262,22 @@ async function updateBadgeAndInjectScripts(tabId) {
         return;
     }
 
-    const excludedUrls = [/^chrome:\/\//, /^chrome-extension:\/\//, /^moz-extension:\/\//, /^about:/, /^edge:/, /^opera:/, /^extension:/, /^file:\/\/.*\/AppData\/Local\//, /^https:\/\/chrome\.google\.com\/webstore/, /^https:\/\/addons\.mozilla\.org/, /^https:\/\/microsoftedge\.microsoft\.com\/addons/];
+    const excludedUrls = [
+        /^chrome:\/\//,
+        /^chrome-extension:\/\//,
+        /^moz-extension:\/\//,
+        /^about:/,
+        /^edge:/,
+        /^opera:/,
+        /^extension:/,
+        /^file:\/\/.*\/AppData\/Local\//,
+        /^https:\/\/chrome\.google\.com\/webstore/,
+        /^https:\/\/addons\.mozilla\.org/,
+        /^https:\/\/microsoftedge\.microsoft\.com\/addons/,
+        /^chrome-search:\/\//,
+        /^devtools:\/\//,
+        /^view-source:/
+    ];
     const isExcluded = excludedUrls.some(regex => regex.test(tab.url));
 
     if (isExcluded) {
@@ -336,7 +351,22 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         return;
     }
 
-    const excludedUrls = [/^chrome:\/\//, /^chrome-extension:\/\//, /^moz-extension:\/\//, /^about:/, /^edge:/, /^opera:/, /^extension:/, /^file:\/\/.*\/AppData\/Local\//, /^https:\/\/chrome\.google\.com\/webstore/, /^https:\/\/addons\.mozilla\.org/, /^https:\/\/microsoftedge\.microsoft\.com\/addons/];
+    const excludedUrls = [
+        /^chrome:\/\//,
+        /^chrome-extension:\/\//,
+        /^moz-extension:\/\//,
+        /^about:/,
+        /^edge:/,
+        /^opera:/,
+        /^extension:/,
+        /^file:\/\/.*\/AppData\/Local\//,
+        /^https:\/\/chrome\.google\.com\/webstore/,
+        /^https:\/\/addons\.mozilla\.org/,
+        /^https:\/\/microsoftedge\.microsoft\.com\/addons/,
+        /^chrome-search:\/\//,
+        /^devtools:\/\//,
+        /^view-source:/
+    ];
     const isExcluded = excludedUrls.some(regex => regex.test(tab.url));
 
     if (isExcluded) {
@@ -562,6 +592,135 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 }).catch(error => {
                     console.error("onMessage: Error proxying request:", error);
                     sendResponse({ success: false, error: error.message });
+                });
+                return true;
+            
+            // GM API handlers
+            case 'GM_getValue':
+                chrome.storage.local.get(`gm_${request.scriptId}_${request.name}`, (result) => {
+                    const value = result[`gm_${request.scriptId}_${request.name}`];
+                    sendResponse({ value: value !== undefined ? value : request.defaultValue });
+                });
+                return true;
+                
+            case 'GM_setValue':
+                chrome.storage.local.set({ [`gm_${request.scriptId}_${request.name}`]: request.value }, () => {
+                    sendResponse({ success: true });
+                });
+                return true;
+                
+            case 'GM_deleteValue':
+                chrome.storage.local.remove(`gm_${request.scriptId}_${request.name}`, () => {
+                    sendResponse({ success: true });
+                });
+                return true;
+                
+            case 'GM_listValues':
+                chrome.storage.local.get(null, (result) => {
+                    const prefix = `gm_${request.scriptId}_`;
+                    const values = Object.keys(result)
+                        .filter(key => key.startsWith(prefix))
+                        .map(key => key.substring(prefix.length));
+                    sendResponse({ values });
+                });
+                return true;
+                
+            case 'GM_openInTab':
+                chrome.tabs.create({
+                    url: request.url,
+                    active: request.active,
+                    index: request.insert ? undefined : undefined
+                }, (tab) => {
+                    sendResponse({ tabId: tab.id });
+                });
+                return true;
+                
+            case 'GM_registerMenuCommand':
+                // Store menu command info
+                chrome.storage.local.get('gmMenuCommands', (result) => {
+                    const commands = result.gmMenuCommands || {};
+                    if (!commands[request.scriptId]) {
+                        commands[request.scriptId] = {};
+                    }
+                    commands[request.scriptId][request.menuId] = {
+                        name: request.name,
+                        options: request.options
+                    };
+                    chrome.storage.local.set({ gmMenuCommands: commands }, () => {
+                        sendResponse({ success: true });
+                    });
+                });
+                return true;
+                
+            case 'GM_unregisterMenuCommand':
+                chrome.storage.local.get('gmMenuCommands', (result) => {
+                    const commands = result.gmMenuCommands || {};
+                    if (commands[request.scriptId]) {
+                        delete commands[request.scriptId][request.menuId];
+                        chrome.storage.local.set({ gmMenuCommands: commands }, () => {
+                            sendResponse({ success: true });
+                        });
+                    }
+                });
+                return true;
+                
+            case 'GM_notification':
+                chrome.notifications.create({
+                    type: 'basic',
+                    iconUrl: request.image || chrome.runtime.getURL('icon48.png'),
+                    title: request.title || 'Zedmonkey',
+                    message: request.text
+                }, (notificationId) => {
+                    sendResponse({ notificationId });
+                });
+                return true;
+                
+            case 'GM_xmlhttpRequest':
+                const details = request.details;
+                fetch(details.url, {
+                    method: details.method || 'GET',
+                    headers: details.headers || {},
+                    body: details.data || null
+                })
+                .then(response => {
+                    const responseObj = {
+                        readyState: 4,
+                        responseText: '',
+                        responseURL: response.url,
+                        status: response.status,
+                        statusText: response.statusText,
+                        responseHeaders: {}
+                    };
+                    
+                    // Get response headers
+                    response.headers.forEach((value, key) => {
+                        responseObj.responseHeaders[key] = value;
+                    });
+                    
+                    return response.text().then(text => {
+                        responseObj.responseText = text;
+                        return responseObj;
+                    });
+                })
+                .then(responseObj => {
+                    sendResponse(responseObj);
+                })
+                .catch(error => {
+                    sendResponse({ error: error.message });
+                });
+                return true;
+                
+            case 'GM_download':
+                chrome.downloads.download({
+                    url: request.url,
+                    filename: request.name,
+                    headers: request.headers ? Object.entries(request.headers).map(([name, value]) => ({ name, value })) : []
+                }, (downloadId) => {
+                    if (chrome.runtime.lastError) {
+                        sendResponse({ error: chrome.runtime.lastError.message });
+                    } else {
+                        sendResponse({ downloadId });
+                    }
                 });
                 return true;
             default:

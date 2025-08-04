@@ -24,7 +24,10 @@
       "activeTab",
       "declarativeNetRequest",
       "webRequest",
-      "webNavigation"
+      "webNavigation",
+      "notifications",
+      "downloads",
+      "tabs"
     ],
     "host_permissions": [
       "<all_urls>"

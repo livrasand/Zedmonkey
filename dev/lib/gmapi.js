@@ -1,22 +1,13 @@
-// ==UserScript==
-// @name         Zedmonkey Script
-// @namespace    zedmonkey
-// @version      1.0
-// @match        *://*/*
-// @grant        GM_getValue
-// @grant        GM_setValue
-// @grant        GM_deleteValue
-// @grant        GM_listValues
-// @grant        GM_xmlhttpRequest
-// @grant        GM_addStyle
-// @grant        GM_addElement
-// @grant        GM_openInTab
-// @grant        GM_notification
-// @grant        GM_setClipboard
-// @grant        GM_registerMenuCommand
-// @grant        GM_unregisterMenuCommand
-// @grant        GM_download
-// ==/UserScript==
+/******************************************************************************
+ * Zedmonkey GM API Implementation
+ * Complete compatibility with Violentmonkey/Greasemonkey/Tampermonkey APIs
+ * 
+ * This provides all standard GM_* functions and GM.* async aliases
+ * Compatible with:
+ * - Violentmonkey 2.x APIs
+ * - Greasemonkey 3.x and 4.x APIs  
+ * - Tampermonkey APIs
+ ******************************************************************************/
 
 (function() {
     // --- unsafeWindow ---
@@ -25,11 +16,87 @@
     }
 
     // --- GM_info ---
-    if (window.__ZEDMONKEY_GM_INFO__) {
-        window.GM_info = window.__ZEDMONKEY_GM_INFO__;
-        if (!window.GM) window.GM = {};
-        window.GM.info = window.GM_info;
+    function createGMInfo() {
+        const getBrowserName = () => {
+            const ua = navigator.userAgent;
+            if (ua.includes('Firefox')) return 'Firefox';
+            if (ua.includes('Chrome')) return 'Chrome';
+            if (ua.includes('Safari')) return 'Safari';
+            if (ua.includes('Edge')) return 'Edge';
+            return 'Chrome'; // Default
+        };
+        
+        const getBrowserVersion = () => {
+            const ua = navigator.userAgent;
+            const match = ua.match(/(Chrome|Firefox|Safari|Edge)\/([0-9.]+)/);
+            return match ? match[2] : '100.0';
+        };
+        
+        const getOS = () => {
+            const platform = navigator.platform;
+            if (platform.includes('Win')) return 'win';
+            if (platform.includes('Mac')) return 'mac';
+            if (platform.includes('Linux')) return 'linux';
+            if (platform.includes('Android')) return 'android';
+            return 'linux';
+        };
+        
+        const getArch = () => {
+            if (navigator.platform.includes('64') || navigator.userAgent.includes('x64')) return 'x86-64';
+            if (navigator.platform.includes('ARM') || navigator.userAgent.includes('ARM')) return 'arm64';
+            return 'x86-32';
+        };
+        
+        return {
+            injectInto: window.__ZEDMONKEY_INJECT_INTO__ || 'auto',
+            isIncognito: chrome?.extension?.inIncognitoContext || false,
+            platform: {
+                arch: getArch(),
+                browserName: getBrowserName(),
+                browserVersion: getBrowserVersion(),
+                fullVersionList: navigator.userAgentData?.brands || [],
+                mobile: navigator.userAgentData?.mobile || /Mobile|Android/i.test(navigator.userAgent),
+                os: getOS()
+            },
+            script: window.__ZEDMONKEY_SCRIPT_META__ || {
+                antifeature: [],
+                author: '',
+                compatible: [],
+                connect: [],
+                description: 'Zedmonkey Script',
+                downloadURL: '',
+                excludeMatches: [],
+                excludes: [],
+                grant: ['none'],
+                homepage: '',
+                homepageURL: '',
+                icon: '',
+                includes: [],
+                matches: ['*://*/*'],
+                name: 'Zedmonkey Script',
+                namespace: 'zedmonkey',
+                noframes: false,
+                require: [],
+                resources: [],
+                runAt: 'document-idle',
+                supportURL: '',
+                unwrap: false,
+                updateURL: '',
+                version: '1.0'
+            },
+            scriptHandler: 'Zedmonkey',
+            scriptMetaStr: window.__ZEDMONKEY_SCRIPT_META_STR__ || '// ==UserScript==\n// @name Zedmonkey Script\n// ==/UserScript==',
+            scriptWillUpdate: false,
+            userAgent: navigator.userAgent,
+            userAgentData: navigator.userAgentData,
+            uuid: window.__ZEDMONKEY_SCRIPT_UUID__ || 'zedmonkey-' + Date.now(),
+            version: '1.4.0'
+        };
     }
+    
+    window.GM_info = window.__ZEDMONKEY_GM_INFO__ || createGMInfo();
+    if (!window.GM) window.GM = {};
+    window.GM.info = window.GM_info;
 
     // --- Storage helpers ---
     const STORAGE_KEY = '__zedmonkey_gm_storage__' + (GM_info?.script?.uuid || GM_info?.script?.name || '');
