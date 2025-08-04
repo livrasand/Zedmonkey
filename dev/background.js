@@ -1,4 +1,12 @@
-import { parseUserscriptMetadata } from './lib/parser.js';
+import { 
+    parseUserscriptMetadata, 
+    validateMetadataBlock, 
+    validateVersion, 
+    getLocalizedValue, 
+    normalizeMatchPattern, 
+    requiresPrivileges, 
+    createTestScript 
+} from './lib/parser.js';
 
 async function getScripts() {
     console.log("getScripts: Attempting to retrieve scripts from storage.");
@@ -120,35 +128,47 @@ function isScriptMatchingUrl(script, url) {
     }
 
     const {
-        match: matches = [],
-        include: includes = [],
-        exclude: excludes = []
+        matches = [],
+        includes = [],
+        excludes = [],
+        excludeMatches = [] // @exclude-match support
     } = script.metadata;
 
-    // 1. Verificar exclusiones ( @exclude)
+    // 1. Verificar exclusiones (@exclude y @exclude-match)
     // Si la URL coincide con alguna regla de exclusión, el script no se inyecta.
-    if (excludes.some(excludePattern => {
-        const regex = new RegExp(globToRegex(excludePattern));
-        if (regex.test(url)) {
-            console.log(`[Zedmonkey] URL ${url} EXCLUIDA para el script "${script.metadata.name}" por la regla: ${excludePattern}`);
-            return true;
+    const allExcludes = [...excludes, ...excludeMatches];
+    if (allExcludes.some(excludePattern => {
+        try {
+            const isMatch = matchesPattern(url, excludePattern);
+            if (isMatch) {
+                console.log(`[Zedmonkey] URL ${url} EXCLUIDA para el script "${script.metadata.name}" por la regla: ${excludePattern}`);
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.warn(`[Zedmonkey] Error processing exclude pattern "${excludePattern}":`, error);
+            return false;
         }
-        return false;
     })) {
         return false;
     }
 
-    // 2. Verificar inclusiones ( @match y @include)
+    // 2. Verificar inclusiones (@match y @include)
     // El script se inyecta si coincide con alguna regla @match O @include.
     const combinedIncludes = [...matches, ...includes];
     if (combinedIncludes.length > 0) {
         if (combinedIncludes.some(includePattern => {
-            const regex = new RegExp(globToRegex(includePattern));
-            if (regex.test(url)) {
-                console.log(`[Zedmonkey] URL ${url} INCLUIDA para el script "${script.metadata.name}" por la regla: ${includePattern}`);
-                return true;
+            try {
+                const isMatch = matchesPattern(url, includePattern);
+                if (isMatch) {
+                    console.log(`[Zedmonkey] URL ${url} INCLUIDA para el script "${script.metadata.name}" por la regla: ${includePattern}`);
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                console.warn(`[Zedmonkey] Error processing include pattern "${includePattern}":`, error);
+                return false;
             }
-            return false;
         })) {
             return true;
         }
@@ -161,6 +181,67 @@ function isScriptMatchingUrl(script, url) {
     // Si hay reglas de inclusión pero ninguna coincidió, no se inyecta.
     console.log(`[Zedmonkey] No matching include rule found for script "${script.metadata.name}".`);
     return false;
+}
+
+// Función para hacer matching de patrones según la especificación de Violentmonkey
+function matchesPattern(url, pattern) {
+    // Normalizar el patrón
+    const normalizedPattern = normalizeMatchPattern(pattern);
+    
+    // Si es un patrón @match válido, usar matching estricto
+    if (isValidMatchPattern(normalizedPattern)) {
+        return matchesMatchPattern(url, normalizedPattern);
+    }
+    
+    // Si es un patrón @include (glob), usar matching de glob
+    return matchesGlobPattern(url, normalizedPattern);
+}
+
+// Verifica si un patrón es un @match válido según la especificación
+function isValidMatchPattern(pattern) {
+    // @match debe tener el formato: <scheme>://<host><path>
+    const matchPatternRegex = /^(\*|https?|file|ftp):\/\/(\*|\*\.[^*\/]+|[^*\/]+)(\/.*)$/;
+    return matchPatternRegex.test(pattern);
+}
+
+// Matching para patrones @match (más estricto)
+function matchesMatchPattern(url, pattern) {
+    try {
+        const urlObj = new URL(url);
+        const [, scheme, host, path] = pattern.match(/^([^:]+):\/\/([^\/]+)(.*)$/);
+        
+        // Verificar scheme
+        if (scheme !== '*' && scheme !== urlObj.protocol.slice(0, -1)) {
+            return false;
+        }
+        
+        // Verificar host
+        if (host !== '*') {
+            if (host.startsWith('*.')) {
+                const domain = host.slice(2);
+                if (!urlObj.hostname.endsWith(domain) || 
+                    (urlObj.hostname !== domain && !urlObj.hostname.endsWith('.' + domain))) {
+                    return false;
+                }
+            } else if (host !== urlObj.hostname) {
+                return false;
+            }
+        }
+        
+        // Verificar path
+        const pathPattern = path.replace(/\*/g, '.*');
+        const pathRegex = new RegExp('^' + pathPattern + '$');
+        return pathRegex.test(urlObj.pathname + urlObj.search + urlObj.hash);
+    } catch (error) {
+        console.warn('Error parsing URL or pattern:', error);
+        return false;
+    }
+}
+
+// Matching para patrones @include (glob patterns)
+function matchesGlobPattern(url, pattern) {
+    const regex = new RegExp('^' + globToRegex(pattern) + '$');
+    return regex.test(url);
 }
 
 // 6. Manejo Robusto de Errores
@@ -202,15 +283,30 @@ const injectionMethods = {
         name: 'Page (MAIN world) Injection',
         inject: async (script, tabId, frameId) => {
             console.log(`injectionMethods.PAGE: Executing script in MAIN world for tab ${tabId}, frame ${frameId}.`);
+            
+            // First, inject the GM API
             await chrome.scripting.executeScript({
                 target: { tabId, frameIds: [frameId] },
-                func: (content) => {
+                files: ['lib/gmapi.js'],
+                world: 'MAIN'
+            });
+            
+            // Then inject the user script
+            await chrome.scripting.executeScript({
+                target: { tabId, frameIds: [frameId] },
+                func: (content, scriptMeta) => {
+                    // Set script metadata for GM_info
+                    if (scriptMeta) {
+                        window.__ZEDMONKEY_SCRIPT_META__ = scriptMeta;
+                        window.__ZEDMONKEY_SCRIPT_UUID__ = 'zedmonkey-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+                    }
+                    
                     const s = document.createElement('script');
                     s.textContent = content;
                     (document.head || document.documentElement).appendChild(s);
                     s.remove(); // Eliminar el elemento script después de la ejecución
                 },
-                args: [script.content],
+                args: [script.content, script.metadata],
                 world: 'MAIN'
             });
         }
@@ -723,6 +819,73 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                     }
                 });
                 return true;
+                
+            case 'createTestScript':
+                try {
+                    const testScriptContent = createTestScript();
+                    const metadata = parseUserscriptMetadata(testScriptContent);
+                    
+                    // Validar el metadata block del script de prueba
+                    const validation = validateMetadataBlock(testScriptContent);
+                    if (!validation.valid) {
+                        console.warn('Test script metadata validation warnings:', validation.errors);
+                    }
+                    
+                    saveScript({
+                        content: testScriptContent,
+                        metadata: metadata,
+                        enabled: true
+                    }).then(script => {
+                        console.log('Test script created successfully:', script.metadata.name);
+                        sendResponse({
+                            success: true,
+                            scriptId: script.id,
+                            name: script.metadata.name,
+                            validation: validation
+                        });
+                        
+                        // Update badges for all tabs
+                        chrome.tabs.query({}, tabs => {
+                            tabs.forEach(tab => {
+                                updateBadgeAndInjectScripts(tab.id);
+                            });
+                        });
+                    }).catch(error => {
+                        sendResponse({
+                            success: false,
+                            error: error.message
+                        });
+                    });
+                } catch (error) {
+                    sendResponse({
+                        success: false,
+                        error: 'Failed to create test script: ' + error.message
+                    });
+                }
+                return true;
+                
+            case 'validateMetadata':
+                try {
+                    const validation = validateMetadataBlock(request.scriptContent);
+                    const metadata = parseUserscriptMetadata(request.scriptContent);
+                    const requiresPrivs = metadata ? requiresPrivileges(metadata) : false;
+                    const validVersion = metadata && metadata.version ? validateVersion(metadata.version) : false;
+                    
+                    sendResponse({
+                        success: true,
+                        validation: validation,
+                        metadata: metadata,
+                        requiresPrivileges: requiresPrivs,
+                        validVersion: validVersion
+                    });
+                } catch (error) {
+                    sendResponse({
+                        success: false,
+                        error: error.message
+                    });
+                }
+                return true;
+                
             default:
                 console.warn("onMessage: Unknown action received:", request.action);
                 sendResponse({ error: "Unknown action" });
