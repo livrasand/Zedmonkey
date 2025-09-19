@@ -86,7 +86,7 @@
      * @param {number} retries - Number of retries (default: 3)
      * @returns {Promise<any>} A promise that resolves with the background script's response.
      */
-    const callBackground = (message, timeout = 10000, retries = 3) => {
+    function callBackground(message, timeout = 10000, retries = 3) {
         const startTime = performance.now();
         
         // Input validation
