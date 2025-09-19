@@ -1,64 +1,186 @@
-// Listen for messages from background
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    // Handle userscript detection
-    if (message.action === "detectUserscript") {
-        let result = detectUserscripts();
-        sendResponse(result);
-        
-        if (result.detected && result.scriptContent) {
-            chrome.storage.sync.get("autoShowInstallUI", e => {
-                if (e.autoShowInstallUI !== false) {
-                    createInstallUI(result);
-                }
-            });
-        }
-        return true;
-    }
-    
-    // Handle script installation
-    if (message.action === "installScript") {
-        if (message.scriptContent) {
-            createInstallUI({
-                scriptContent: message.scriptContent
-            });
-        } else if (message.scriptUrl) {
-            fetchScript(message.scriptUrl).then(content => {
-                if (content && content.error) {
-                    if (!content.contextInvalidated) {
-                        showNotification("Error fetching script: " + content.message, true);
-                    }
-                } else if (content) {
-                    createInstallUI({
-                        scriptContent: content
-                    });
+/**
+ * Content Script for Zedmonkey
+ * Handles userscript detection, installation UI, and GM API bridge
+ */
+
+// Import GM API bridge for postMessage communication
+const script = document.createElement('script');
+script.src = chrome.runtime.getURL('content/gm-bridge.js');
+script.onload = () => script.remove();
+(document.head || document.documentElement).appendChild(script);
+
+/**
+ * Message handler for GM bridge communication from injected scripts
+ */
+window.addEventListener('message', async (event) => {
+    // Only handle messages from the same window (injected scripts)
+    if (event.source !== window) return;
+
+    const data = event.data;
+    if (!data || data.type !== 'ZEDMONKEY_BRIDGE_REQUEST') return;
+
+    console.log('[Content Script] Received bridge request:', data.payload.action);
+
+    try {
+        // Forward the request to the background script
+        const response = await new Promise((resolve, reject) => {
+            chrome.runtime.sendMessage(data.payload, (result) => {
+                if (chrome.runtime.lastError) {
+                    reject(new Error(chrome.runtime.lastError.message));
                 } else {
-                    showNotification("Failed to fetch script content", true);
+                    resolve(result);
                 }
             });
-        }
-        return true;
+        });
+
+        // Send response back to the injected script
+        window.postMessage({
+            type: 'ZEDMONKEY_BRIDGE_RESPONSE',
+            requestId: data.payload.messageId,
+            response
+        }, '*');
+
+    } catch (error) {
+        console.error('[Content Script] Bridge request failed:', error);
+
+        // Send error response back to the injected script
+        window.postMessage({
+            type: 'ZEDMONKEY_BRIDGE_RESPONSE',
+            requestId: data.payload.messageId,
+            error: error.message
+        }, '*');
     }
 });
 
-function detectUserscripts() {
-    var e;
-    for (e of document.querySelectorAll("script")) {
-        var t = e.textContent || "";
-        if (t.includes("// ==UserScript==") && t.includes("// ==/UserScript==")) return {
-            detected: !0,
-            scriptContent: t
+/**
+ * Message handler for background script communication
+ */
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    try {
+        switch (message.action) {
+            case "detectUserscript":
+                handleUserscriptDetection(sendResponse);
+                return true;
+                
+            case "installScript":
+                handleScriptInstallation(message);
+                return true;
+                
+            default:
+                console.log('Content script: Unknown message action:', message.action);
+                sendResponse({ error: 'Unknown action' });
+                return false;
         }
+    } catch (error) {
+        console.error('Content script: Error handling message:', error);
+        sendResponse({ error: error.message });
+        return false;
     }
-    var o = document.querySelectorAll('a[href$=".user.js"]');
-    return 0 < o.length ? {
-        detected: !0,
-        scriptLinks: Array.from(o).map(e => ({
-            url: e.href,
-            text: e.textContent || e.href
-        }))
-    } : {
-        detected: !1
+});
+
+/**
+ * Handles userscript detection requests from background
+ * @param {Function} sendResponse - Response callback function
+ */
+function handleUserscriptDetection(sendResponse) {
+    const result = detectUserscripts();
+    sendResponse(result);
+    
+    if (result.detected && result.scriptContent) {
+        chrome.storage.sync.get("autoShowInstallUI", (settings) => {
+            if (settings.autoShowInstallUI !== false) {
+                createInstallUI(result);
+            }
+        });
     }
+}
+
+/**
+ * Handles script installation requests
+ * @param {Object} message - Message containing script data
+ */
+function handleScriptInstallation(message) {
+    if (message.scriptContent) {
+        createInstallUI({ scriptContent: message.scriptContent });
+    } else if (message.scriptUrl) {
+        fetchScript(message.scriptUrl)
+            .then(content => {
+                if (content?.error && !content.contextInvalidated) {
+                    showNotification(`Error fetching script: ${content.message}`, true);
+                } else if (content) {
+                    createInstallUI({ scriptContent: content });
+                } else {
+                    showNotification("Failed to fetch script content", true);
+                }
+            })
+            .catch(error => {
+                console.error('Content script: Error in script installation:', error);
+                showNotification(`Installation error: ${error.message}`, true);
+            });
+    } else {
+        showNotification("No script content or URL provided", true);
+    }
+}
+
+/**
+ * Detects userscripts embedded in the current page or linked via .user.js files
+ * @returns {Object} Detection result with detected flag and script data
+ */
+function detectUserscripts() {
+    const detectionResult = {
+        detected: false,
+        scriptContent: null,
+        scriptLinks: []
+    };
+    
+    try {
+        // Check for embedded userscripts in script tags
+        const scriptTags = document.querySelectorAll('script');
+        for (const scriptTag of scriptTags) {
+            const content = scriptTag.textContent || scriptTag.innerText || '';
+            if (isValidUserscriptContent(content)) {
+                return {
+                    detected: true,
+                    scriptContent: content
+                };
+            }
+        }
+        
+        // Check for userscript links
+        const userscriptLinks = document.querySelectorAll('a[href$=".user.js"], a[href*=".user.js?"]');
+        if (userscriptLinks.length > 0) {
+            return {
+                detected: true,
+                scriptLinks: Array.from(userscriptLinks).map(link => ({
+                    url: link.href,
+                    text: link.textContent?.trim() || link.href
+                })).filter(link => link.url) // Remove empty URLs
+            };
+        }
+        
+    } catch (error) {
+        console.error('detectUserscripts: Error during detection:', error);
+    }
+    
+    return detectionResult;
+}
+
+/**
+ * Validates if content appears to be a valid userscript
+ * @param {string} content - Content to validate
+ * @returns {boolean} True if content looks like a userscript
+ */
+function isValidUserscriptContent(content) {
+    if (!content || typeof content !== 'string' || content.length < 50) {
+        return false;
+    }
+    
+    const hasStartMarker = content.includes('// ==UserScript==');
+    const hasEndMarker = content.includes('// ==/UserScript==');
+    const startIndex = content.indexOf('// ==UserScript==');
+    const endIndex = content.indexOf('// ==/UserScript==');
+    
+    return hasStartMarker && hasEndMarker && startIndex < endIndex;
 }
 
 function createInstallUI(o) {

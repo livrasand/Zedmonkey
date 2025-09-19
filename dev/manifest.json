@@ -53,7 +53,9 @@
             "scripts/*.js",
             "onboarding/*",
             "content/content.js",
-            "editor/editor_sandbox.html"
+            "content/gm-bridge.js",
+            "editor/editor_sandbox.html",
+            "lib/api.js"
         ],
         "matches": ["<all_urls>"]
     }],

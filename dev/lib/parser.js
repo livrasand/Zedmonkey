@@ -1,21 +1,55 @@
 // Parser compatible con el metadata block de Violentmonkey/Greasemonkey/Tampermonkey
 // Compatible con todas las especificaciones del metadata block de Violentmonkey
 
+/**
+ * Generates a safe script ID from a script name
+ * @param {string} name - The script name to convert to ID
+ * @returns {string} A safe alphanumeric ID
+ */
 function getScriptId(name) {
-    let id = null;
-    name = encodeURI(name);
-    const ch = name.match(/[a-zA-Z0-9]/g);
-    if (ch) {
-        id = ch.join('');
-    } else {
-        id = btoa(name).replace(/[^a-zA-Z0-9]/g, '');
+    if (!name || typeof name !== 'string') {
+        console.warn('getScriptId: Invalid name provided, using fallback');
+        return `script_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     }
-    return id;
+    
+    try {
+        // Remove potentially dangerous characters and encode URI
+        const safeName = encodeURIComponent(name.trim()).replace(/%/g, '');
+        const alphanumericOnly = safeName.match(/[a-zA-Z0-9]/g);
+        
+        if (alphanumericOnly && alphanumericOnly.length > 0) {
+            return alphanumericOnly.join('').substring(0, 50); // Limit length
+        } else {
+            // Fallback for names with no alphanumeric characters
+            return btoa(safeName).replace(/[^a-zA-Z0-9]/g, '').substring(0, 50);
+        }
+    } catch (error) {
+        console.error('getScriptId: Error generating ID:', error);
+        return `script_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    }
 }
 
 // Valida el formato del metadata block
+/**
+ * Validates the structure and format of a userscript metadata block
+ * @param {string} src - The source code to validate
+ * @returns {Object} Validation result with valid boolean and errors array
+ */
 function validateMetadataBlock(src) {
+    if (!src || typeof src !== 'string') {
+        return { valid: false, errors: ['Invalid source code provided'] };
+    }
+    
+    // Prevent extremely large inputs that could cause performance issues
+    if (src.length > 1000000) { // 1MB limit
+        return { valid: false, errors: ['Source code too large for validation'] };
+    }
+    
     const lines = src.split('\n');
+    if (lines.length === 0) {
+        return { valid: false, errors: ['Empty source code'] };
+    }
+    
     const startLine = lines.find(line => line.trim() === '// ==UserScript==');
     const endLine = lines.find(line => line.trim() === '// ==/UserScript==');
     
@@ -27,44 +61,108 @@ function validateMetadataBlock(src) {
     const endIndex = lines.indexOf(endLine);
     
     if (startIndex >= endIndex) {
-        return { valid: false, errors: ['Invalid metadata block structure'] };
+        return { valid: false, errors: ['Invalid metadata block structure - end marker before start marker'] };
     }
     
-    // Verificar formato de líneas de metadata
+    if (endIndex - startIndex > 200) {
+        return { valid: false, errors: ['Metadata block too large - possible security risk'] };
+    }
+    
+    // Validate metadata line formats
     const errors = [];
+    const suspiciousPatterns = [
+        /<script/i, /javascript:/i, /eval\(/i, /function\(/i,
+        /window\./i, /document\./i, /alert\(/i
+    ];
+    
     for (let i = startIndex + 1; i < endIndex; i++) {
         const line = lines[i].trim();
-        if (line === '') continue; // Líneas vacías permitidas
+        if (line === '') continue; // Empty lines allowed
         
-        // Cada línea debe comenzar con // y tener exactamente un espacio
+        // Check for suspicious content in metadata
+        if (suspiciousPatterns.some(pattern => pattern.test(line))) {
+            errors.push(`Line ${i + 1}: Potentially unsafe content detected in metadata`);
+        }
+        
+        // Each metadata line must start with '// '
         if (!line.startsWith('// ')) {
             errors.push(`Line ${i + 1}: Metadata line must start with '// ' (note the space)`);
         }
         
-        // Si comienza con @, debe tener formato válido
-        if (line.startsWith('// @') && !line.match(/^\/\/\s@[a-zA-Z0-9_\-]+(?::[a-zA-Z\-_]+)?(?:\s+.*)?$/)) {
-            errors.push(`Line ${i + 1}: Invalid metadata format`);
+        // Validate @directive format
+        if (line.startsWith('// @')) {
+            if (!line.match(/^\/\/\s@[a-zA-Z0-9_\-]+(?::[a-zA-Z\-_]+)?(?:\s+.*)?$/)) {
+                errors.push(`Line ${i + 1}: Invalid metadata directive format`);
+            }
+            
+            // Check for excessively long values
+            const parts = line.split(/\s+/);
+            if (parts.length > 1 && parts.slice(2).join(' ').length > 500) {
+                errors.push(`Line ${i + 1}: Metadata value too long`);
+            }
         }
     }
     
-    return { valid: errors.length === 0, errors };  
+    return { valid: errors.length === 0, errors };
 }
 
+/**
+ * Extracts the metadata header block from userscript source
+ * @param {string} src - Source code containing the userscript
+ * @returns {string|null} The metadata header or null if not found
+ */
 function getHeader(src) {
-    // Extrae el bloque de metadatos entre ==UserScript== y ==/UserScript==
-    const headerStart = /^\/\/\s*==UserScript==/m;
-    const headerStop = /^\/\/\s*==\/UserScript==/m;
-    const startMatch = src.match(headerStart);
-    const stopMatch = src.match(headerStop);
-    if (!startMatch || !stopMatch) return null;
-    const startIdx = src.indexOf(startMatch[0]);
-    const stopIdx = src.indexOf(stopMatch[0]);
-    if (startIdx === -1 || stopIdx === -1) return null;
-    const header = src.substring(startIdx + startMatch[0].length, stopIdx);
-    // Evita HTMLs mal formateados
-    if (src.indexOf('<html>') > 0 && src.indexOf('<html>') < startIdx) return null;
-    if (src.indexOf('<body>') > 0 && src.indexOf('<body>') < startIdx) return null;
-    return header;
+    if (!src || typeof src !== 'string') {
+        return null;
+    }
+    
+    // Prevent processing of extremely large files
+    if (src.length > 1000000) {
+        console.warn('getHeader: Source file too large, skipping processing');
+        return null;
+    }
+    
+    try {
+        // Extract metadata block between ==UserScript== markers
+        const headerStart = /^\/\/\s*==UserScript==/m;
+        const headerStop = /^\/\/\s*==\/UserScript==/m;
+        const startMatch = src.match(headerStart);
+        const stopMatch = src.match(headerStop);
+        
+        if (!startMatch || !stopMatch) {
+            return null;
+        }
+        
+        const startIdx = src.indexOf(startMatch[0]);
+        const stopIdx = src.indexOf(stopMatch[0]);
+        
+        if (startIdx === -1 || stopIdx === -1 || startIdx >= stopIdx) {
+            return null;
+        }
+        
+        // Security check: prevent processing of malformed HTML
+        const htmlStart = src.indexOf('<html>');
+        const bodyStart = src.indexOf('<body>');
+        
+        if ((htmlStart > 0 && htmlStart < startIdx) || (bodyStart > 0 && bodyStart < startIdx)) {
+            console.warn('getHeader: Detected HTML content before userscript block');
+            return null;
+        }
+        
+        const header = src.substring(startIdx + startMatch[0].length, stopIdx);
+        
+        // Validate header size to prevent memory issues
+        if (header.length > 50000) {
+            console.warn('getHeader: Metadata header too large');
+            return null;
+        }
+        
+        return header;
+        
+    } catch (error) {
+        console.error('getHeader: Error extracting header:', error);
+        return null;
+    }
 }
 
 function processHeader(header) {

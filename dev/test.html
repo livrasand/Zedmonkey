@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zedmonkey - Pruebas de Integración</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .logo {
+            display: block;
+            margin: 0 auto 20px;
+            width: 64px;
+            height: 64px;
+            background: #3498db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+        }
+        
+        .test-section {
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .test-section h3 {
+            margin-top: 0;
+            color: #3498db;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 5px;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button.success {
+            background: linear-gradient(45deg, #27ae60, #229954);
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+        
+        button.error {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+        
+        #console {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            white-space: pre-wrap;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .status.success {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .status.error {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .status.pending {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .info-box {
+            background: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .warning-box {
+            background: rgba(241, 196, 15, 0.1);
+            border-left: 4px solid #f1c40f;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🐒</div>
+        <h1>Zedmonkey - Pruebas de Integración</h1>
+        
+        <div class="info-box">
+            <strong>Instrucciones:</strong>
+            <ol>
+                <li>Asegúrate de que Zedmonkey esté instalado y habilitado</li>
+                <li>Abre las herramientas de desarrollador (F12) para ver logs adicionales</li>
+                <li>Ejecuta las pruebas en orden o individualmente</li>
+                <li>Revisa la consola de abajo para ver los resultados detallados</li>
+            </ol>
+        </div>
+        
+        <div class="test-section">
+            <h3>🧪 Prueba de Integración Completa</h3>
+            <p>Ejecuta todos los tests de integración en secuencia.</p>
+            <button id="fullIntegrationTest">Ejecutar Test Completo</button>
+            <span id="fullTestStatus" class="status pending">Pendiente</span>
+        </div>
+        
+        <div class="test-section">
+            <h3>📡 Comunicación con Background Script</h3>
+            <p>Verifica que el popup pueda comunicarse con el background script.</p>
+            <button id="communicationTest">Test Comunicación</button>
+            <span id="commStatus" class="status pending">Pendiente</span>
+        </div>
+        
+        <div class="test-section">
+            <h3>💾 Storage y Scripts</h3>
+            <p>Prueba operaciones de guardado, carga y eliminación de scripts.</p>
+            <button id="storageTest">Test Storage</button>
+            <button id="createTestScript">Crear Script de Prueba</button>
+            <span id="storageStatus" class="status pending">Pendiente</span>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔗 Matching de URLs</h3>
+            <p>Verifica el sistema de matching de patrones URL.</p>
+            <button id="urlMatchingTest">Test URL Matching</button>
+            <span id="urlStatus" class="status pending">Pendiente</span>
+        </div>
+        
+        <div class="test-section">
+            <h3>📝 Parser de Metadata</h3>
+            <p>Valida el parsing de bloques de metadatos UserScript.</p>
+            <button id="parserTest">Test Parser</button>
+            <span id="parserStatus" class="status pending">Pendiente</span>
+        </div>
+        
+        <div class="test-section">
+            <h3>🖥️ Consola de Resultados</h3>
+            <button id="clearConsole">Limpiar Consola</button>
+            <div id="console"></div>
+        </div>
+        
+        <div class="warning-box">
+            <strong>Nota:</strong> Si algún test falla, revisa:
+            <ul>
+                <li>Que Zedmonkey esté habilitado en chrome://extensions/</li>
+                <li>Que no haya errores en la consola del navegador</li>
+                <li>Que los permisos necesarios estén otorgados</li>
+            </ul>
+        </div>
+    </div>
+
+    <script type="module">
+        // Función para escribir en la consola personalizada
+        function writeToConsole(message, type = 'log') {
+            const console = document.getElementById('console');
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = {
+                'log': '📝',
+                'error': '❌',
+                'success': '✅',
+                'info': 'ℹ️'
+            }[type] || '📝';
+            
+            console.innerHTML += `[${timestamp}] ${prefix} ${message}\n`;
+            console.scrollTop = console.scrollHeight;
+        }
+        
+        // Función para actualizar status
+        function updateStatus(elementId, status, text = null) {
+            const element = document.getElementById(elementId);
+            element.className = `status ${status}`;
+            if (text) element.textContent = text;
+            else element.textContent = status === 'success' ? 'Exitoso' : 
+                                      status === 'error' ? 'Error' : 'Pendiente';
+        }
+        
+        // Test de comunicación básica
+        document.getElementById('communicationTest').addEventListener('click', async () => {
+            writeToConsole('Iniciando test de comunicación...', 'info');
+            updateStatus('commStatus', 'pending', 'Ejecutando...');
+            
+            try {
+                const response = await chrome.runtime.sendMessage({ action: 'getScripts' });
+                writeToConsole('✅ Comunicación exitosa con background script', 'success');
+                writeToConsole(`Respuesta: ${JSON.stringify(response, null, 2)}`, 'log');
+                updateStatus('commStatus', 'success');
+            } catch (error) {
+                writeToConsole(`❌ Error en comunicación: ${error.message}`, 'error');
+                updateStatus('commStatus', 'error');
+            }
+        });
+        
+        // Test de storage
+        document.getElementById('storageTest').addEventListener('click', async () => {
+            writeToConsole('Iniciando test de storage...', 'info');
+            updateStatus('storageStatus', 'pending', 'Ejecutando...');
+            
+            try {
+                // Crear un script de prueba
+                const testScript = `// ==UserScript==
+// @name Test Storage Script
+// @version 1.0
+// @match *://example.com/*
+// @grant none
+// ==/UserScript==
+console.log('Storage test');`;
+
+                const addResponse = await chrome.runtime.sendMessage({
+                    action: 'addScript',
+                    scriptContent: testScript
+                });
+                
+                if (addResponse.success) {
+                    writeToConsole('✅ Script creado exitosamente', 'success');
+                    
+                    // Verificar que se guardó
+                    const getResponse = await chrome.runtime.sendMessage({ action: 'getScripts' });
+                    const found = getResponse.scripts?.find(s => s.id === addResponse.scriptId);
+                    
+                    if (found) {
+                        writeToConsole('✅ Script encontrado en storage', 'success');
+                        
+                        // Eliminar el script de prueba
+                        const removeResponse = await chrome.runtime.sendMessage({
+                            action: 'removeScript',
+                            scriptId: addResponse.scriptId
+                        });
+                        
+                        if (removeResponse.success) {
+                            writeToConsole('✅ Script eliminado exitosamente', 'success');
+                            updateStatus('storageStatus', 'success');
+                        } else {
+                            writeToConsole('❌ Error eliminando script', 'error');
+                            updateStatus('storageStatus', 'error');
+                        }
+                    } else {
+                        writeToConsole('❌ Script no encontrado después de crearlo', 'error');
+                        updateStatus('storageStatus', 'error');
+                    }
+                } else {
+                    writeToConsole(`❌ Error creando script: ${addResponse.error}`, 'error');
+                    updateStatus('storageStatus', 'error');
+                }
+            } catch (error) {
+                writeToConsole(`❌ Error en test de storage: ${error.message}`, 'error');
+                updateStatus('storageStatus', 'error');
+            }
+        });
+        
+        // Test de URL matching
+        document.getElementById('urlMatchingTest').addEventListener('click', async () => {
+            writeToConsole('Iniciando test de URL matching...', 'info');
+            updateStatus('urlStatus', 'pending', 'Ejecutando...');
+            
+            const testUrls = [
+                'https://www.google.com/',
+                'https://example.com/test',
+                'https://github.com/',
+                'chrome://extensions/'
+            ];
+            
+            try {
+                for (const url of testUrls) {
+                    const response = await chrome.runtime.sendMessage({
+                        action: 'getMatchedScripts',
+                        url: url
+                    });
+                    writeToConsole(`URL: ${url} -> Scripts coincidentes: ${response.scripts?.length || 0}`, 'log');
+                }
+                updateStatus('urlStatus', 'success');
+            } catch (error) {
+                writeToConsole(`❌ Error en test de URL matching: ${error.message}`, 'error');
+                updateStatus('urlStatus', 'error');
+            }
+        });
+        
+        // Test de parser
+        document.getElementById('parserTest').addEventListener('click', async () => {
+            writeToConsole('Iniciando test de parser...', 'info');
+            updateStatus('parserStatus', 'pending', 'Ejecutando...');
+            
+            const testScript = `// ==UserScript==
+// @name Test Parser Script
+// @version 1.2.3
+// @description Script para probar el parser
+// @match *://example.com/*
+// @grant GM_getValue
+// @grant GM_setValue
+// ==/UserScript==
+console.log('test');`;
+
+            try {
+                const response = await chrome.runtime.sendMessage({
+                    action: 'validateMetadata',
+                    scriptContent: testScript
+                });
+                
+                if (response.success) {
+                    writeToConsole('✅ Parser validado exitosamente', 'success');
+                    writeToConsole(`Metadata válida: ${response.validation?.valid}`, 'log');
+                    writeToConsole(`Nombre: ${response.metadata?.name}`, 'log');
+                    writeToConsole(`Versión: ${response.metadata?.version}`, 'log');
+                    writeToConsole(`Requiere privilegios: ${response.requiresPrivileges}`, 'log');
+                    updateStatus('parserStatus', 'success');
+                } else {
+                    writeToConsole(`❌ Error en parser: ${response.error}`, 'error');
+                    updateStatus('parserStatus', 'error');
+                }
+            } catch (error) {
+                writeToConsole(`❌ Error en test de parser: ${error.message}`, 'error');
+                updateStatus('parserStatus', 'error');
+            }
+        });
+        
+        // Crear script de prueba que se inyecte visualmente
+        document.getElementById('createTestScript').addEventListener('click', async () => {
+            writeToConsole('Creando script de prueba con indicador visual...', 'info');
+            
+            try {
+                const response = await chrome.runtime.sendMessage({
+                    action: 'createTestScript'
+                });
+                
+                if (response.success) {
+                    writeToConsole('✅ Script de prueba creado exitosamente!', 'success');
+                    writeToConsole(`Script ID: ${response.scriptId}`, 'log');
+                    writeToConsole(`Nombre: ${response.name}`, 'log');
+                    writeToConsole('💡 Ve a https://example.com para ver el script en acción', 'info');
+                } else {
+                    writeToConsole(`❌ Error creando script de prueba: ${response.error}`, 'error');
+                }
+            } catch (error) {
+                writeToConsole(`❌ Error: ${error.message}`, 'error');
+            }
+        });
+        
+        // Test completo
+        document.getElementById('fullIntegrationTest').addEventListener('click', async () => {
+            writeToConsole('🧪 Iniciando test de integración completo...', 'info');
+            updateStatus('fullTestStatus', 'pending', 'Ejecutando...');
+            
+            try {
+                // Simular clicks en todos los tests
+                const tests = ['communicationTest', 'storageTest', 'urlMatchingTest', 'parserTest'];
+                
+                for (const testId of tests) {
+                    writeToConsole(`Ejecutando ${testId}...`, 'info');
+                    document.getElementById(testId).click();
+                    
+                    // Esperar un poco entre tests
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+                
+                writeToConsole('🎉 Test de integración completo finalizado!', 'success');
+                updateStatus('fullTestStatus', 'success', 'Completado');
+                
+            } catch (error) {
+                writeToConsole(`❌ Error en test completo: ${error.message}`, 'error');
+                updateStatus('fullTestStatus', 'error');
+            }
+        });
+        
+        // Limpiar consola
+        document.getElementById('clearConsole').addEventListener('click', () => {
+            document.getElementById('console').innerHTML = '';
+        });
+        
+        // Mensaje inicial
+        writeToConsole('Zedmonkey Test Suite iniciado. Listo para pruebas.', 'info');
+    </script>
+</body>
+</html>
